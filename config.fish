@@ -1,0 +1,1 @@
+/Users/cjappl/.config/fish/config.fish
