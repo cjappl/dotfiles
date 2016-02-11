@@ -32,8 +32,26 @@
 #######################################################################
 
 # remote logins (ssh)
-set -x HARVARD cja859@nice.fas.harvard.edu # login for harvard class
+set HARVARD cja859@nice.fas.harvard.edu # login for harvard class
 
 # PATHS (cd)
-set -x LEGACY ~/Documents/Code/First_workspace/depot/qa/tests/products/DCinema/main # Dcinema legacy area
-set -x ETMS ~/Documents/Code/ETMS/cineops # ETMS
+set LEGACY ~/Documents/Code/First_workspace/depot/qa/tests/products/DCinema/main # Dcinema legacy area
+set ETMS ~/Documents/Code/ETMS/cineops # ETMS
+
+#######################################################################
+# => Aliases and functions
+#######################################################################
+
+alias ccadd "ccollab addchangelist new" # add new changelist
+
+# grep for python files recursively from dir and lower
+function greppy -a pattern dir
+    grep $pattern -r --include \*.py $dir 
+end
+
+alias .1 "cd .." 
+alias .2 "cd ../.." 
+alias .3 "cd ../../.." 
+alias .4 "cd ../../../.." 
+alias .5 "cd ../../../../.." 
+alias .6 "cd ../../../../../.." 
