@@ -33,6 +33,8 @@
 
 # remote logins (ssh)
 set HARVARD cja859@nice.fas.harvard.edu # login for harvard class
+set CINEOPS_A cineops@cjappl-cineops-apps.eng.dolby.net
+set CINEOPS_D cineops@cjappl-cineops-db.eng.dolby.net
 
 # PATHS (cd)
 set LEGACY ~/Documents/Code/First_workspace/depot/qa/tests/products/DCinema/main # Dcinema legacy area
