@@ -169,8 +169,8 @@ set background=dark
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
 
-" Use mac as the standard file type
-set ffs=mac,unix
+" Use unix as the standard file type
+set ffs=unix
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
