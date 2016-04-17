@@ -57,3 +57,6 @@ alias .3 "cd ../../.."
 alias .4 "cd ../../../.." 
 alias .5 "cd ../../../../.." 
 alias .6 "cd ../../../../../.." 
+
+# finding my ip address
+alias ip_addr "ifconfig en0 inet | grep inet"

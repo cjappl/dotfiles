@@ -1,0 +1,29 @@
+# use broken brackets for functions, attached for control structs
+--style=kr
+
+# use four spaces per indent
+--indent=spaces=4
+
+# use sane switch indentation
+--indent-switches
+
+# padding around operations
+--pad-oper
+
+# convert tabs to spaces throughout 
+--convert-tabs
+
+# unpad parenthesis
+--unpad-paren
+
+# pad between if and first parens
+--pad-header
+
+# align ptr * with name (int *thingy)
+--align-pointer=name
+
+# else if etc on new line from last closing bracket
+--break-closing-brackets
+
+# remove brackets from one line statements
+--remove-brackets
