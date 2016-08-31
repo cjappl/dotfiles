@@ -33,6 +33,7 @@
 
 # remote logins (ssh)
 set HARVARD cja859@nice.fas.harvard.edu # login for harvard class
+set CINEOPS_TMS root@10.202.178.49
 set CINEOPS_A cineops@cjappl-cineops-apps.eng.dolby.net
 set CINEOPS_D cineops@cjappl-cineops-db.eng.dolby.net
 
@@ -45,10 +46,15 @@ set ETMS ~/Documents/Code/ETMS/cineops # ETMS
 #######################################################################
 
 alias ccadd "ccollab addchangelist new" # add new changelist
+alias clear_db "/Users/cjappl/Documents/Code/ETMS/cineops/ops/dockerfile/solr-pub/solr-data/seed-db --db-url http://cjappl-cineops-db.eng.dolby.net:8983/solr/cineops --delete-all"
 
 # grep for python files recursively from dir and lower
 function greppy -a pattern dir
-    grep $pattern -r --include \*.py $dir 
+    grep $pattern -nr --include \*.py $dir 
+end
+
+function forecast_for -a city
+    curl wttr.in/$city
 end
 
 alias .1 "cd .." 
