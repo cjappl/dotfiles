@@ -69,12 +69,14 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
 let g:syntastic_python_checkers=['flake8']
-let g:syntastic_python_flake8_args='--ignore=E501'
+let g:syntastic_python_flake8_args='--ignore=E501,E402,E731'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => YCM 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:ycm_confirm_extra_conf = 0 
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
@@ -83,7 +85,7 @@ let g:ycm_confirm_extra_conf = 0
 set number
 
 " Sets how many lines of history VIM has to remember
-set history=200
+set history=100
 
 " Enable filetype plugins
 filetype plugin on
@@ -117,7 +119,7 @@ set wildignore=*.o,*~,*.pyc
 if has("win16") || has("win32")
     set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 else
-    set wildignore+=.git\*,.hg\*,.svn\*
+    set wildignore+=.git\*,.hg\*,.svn\*,.tox\*,.build\*,.dist\*
 endif
 
 "Always show current position
