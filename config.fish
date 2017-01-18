@@ -51,7 +51,7 @@ alias ccadd "ccollab addchangelist new" # add new changelist
 
 # grep for python files recursively from dir and lower
 function greppy -a pattern dir
-    grep $pattern -nr --include \*.py $dir 
+    rg $pattern --type py -H $dir 
 end
 
 # tar function 
