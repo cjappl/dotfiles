@@ -28,17 +28,10 @@ c = get_config()
 # c.InteractiveShellApp.exec_PYTHONSTARTUP = True
 
 # # List of files to run at IPython startup.
-# c.InteractiveShellApp.exec_files = []
+c.InteractiveShellApp.exec_files = []
 
 # # lines of code to run at IPython startup.
-c.InteractiveShellApp.exec_lines = [
-    'from dcin_doremi.doremi import Doremi',
-    'from dcin_showstore.showstore import ShowStore',
-    'import random',
-    'import re',
-    'from datetime import datetime,timedelta',
-    'from dateutil import parser'
-]
+c.InteractiveShellApp.exec_lines = []
 
 # # A list of dotted module names of IPython extensions to load.
 # c.InteractiveShellApp.extensions = []
