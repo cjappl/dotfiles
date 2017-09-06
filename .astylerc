@@ -1,14 +1,22 @@
 # use broken brackets for functions, attached for control structs
---style=kr
+--style=allman
 
 # use four spaces per indent
 --indent=spaces=4
 
 # use sane switch indentation
 --indent-switches
+--indent-cases
+
+# Indent preprocessor blocks, similar to code
+--indent-preproc-block
+
+# indent comments similar to code
+--indent-col1-comments
 
 # padding around operations
 --pad-oper
+--pad-comma
 
 # convert tabs to spaces throughout 
 --convert-tabs
@@ -19,11 +27,8 @@
 # pad between if and first parens
 --pad-header
 
-# align ptr * with name (int *thingy)
---align-pointer=name
+# align ptr * with type (int* thingy)
+--align-pointer=type
 
-# else if etc on new line from last closing bracket
---break-closing-brackets
-
-# remove brackets from one line statements
---remove-brackets
+# close template spaces
+--close-templates

@@ -32,35 +32,35 @@
 #######################################################################
 
 # remote logins (ssh)
-set SHREDDER root@10.202.19.23
 
 # PATHS (cd)
+set -x PATH $PATH /usr/local/sbin
 set LEGACY ~/Documents/Code/First_workspace/depot/qa/tests/products/DCinema/main # Dcinema legacy area
-set ETMS ~/Documents/Code/ETMS/cineops # ETMS
-set NBA ~/Documents/Code/personal/nbabets/
-set WEBUI ~/Documents/Code/First_workspace/depot/qa/dcinema/
-set AGENT /Volumes/projects/BuildsArea/InternalBuilds/Cinema/D-Cinema/CineOps/
-set CBUILDS /Volumes/projects/BuildsArea/InternalBuilds/Cinema/D-Cinema/
+set DEMO ~/Documents/Code/First_workspace/depot/qa/tests/products/DCinema/main/demo 
+set MUSE ~/Documents/Code/museqa/devel/dj/sys-test
+set MUSE_MAIN ~/Documents/Code/museqa/
+set CONTROLLER "/Users/cjappl/Library/Application Support/Dolby DJ/Controller Mappings"
+set PERSONAL /Users/cjappl/Documents/Code/personal
 
+# P4 
+set -x P4USER 'cjappl'
+set -x P4PORT 'perforce:1666'
+set -x P4CLIENT 'cjappl_CJAPPL-MBP_2200'
+set -x P4DIFF '/Applications/p4merge.app/Contents/MacOS/p4merge'
+
+set -x EDITOR 'vim'
 #######################################################################
 # => Aliases and functions
 #######################################################################
-
-alias ccadd "ccollab addchangelist new" # add new changelist
-# alias clear_db "/Users/cjappl/Documents/Code/ETMS/cineops/ops/dockerfile/solr-pub/solr-data/seed-db --db-url http://cjappl-cineops-db.eng.dolby.net:8983/solr/cineops --delete-all"
 
 # grep for python files recursively from dir and lower
 function greppy -a pattern dir
     rg $pattern --type py -H $dir 
 end
 
-# tar function 
-function tar -a dir
-    /usr/bin/tar xfv $dir 
-end
-
-function forecast_for -a city
-    curl wttr.in/$city
+function coverage_run -a src_dir test_dir
+    coverage run --source $src_dir -m py.test $test_dir -v
+    coverage report -m --fail-under=100
 end
 
 alias .1 "cd .." 
@@ -72,3 +72,6 @@ alias .6 "cd ../../../../../.."
 
 # finding my ip address
 alias ip_addr "ifconfig en0 inet | grep inet"
+
+eval (python3 -m virtualfish auto_activation) 2> /dev/null
+

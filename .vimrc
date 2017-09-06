@@ -30,6 +30,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Vundle
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set shell=bash
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
@@ -68,8 +69,9 @@ set statusline+=%*
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
+let g:syntastic_python_exec = '/usr/local/bin/python3'
 let g:syntastic_python_checkers = ['flake8']
-let g:syntastic_python_flake8_args = '--ignore=E501,E402,E731'
+let g:syntastic_python_flake8_args = '--ignore=E501'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => YCM 
@@ -109,7 +111,7 @@ autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
-set so=3
+set scrolloff=3
 
 " Turn on the WiLd menu
 set wildmenu
@@ -269,9 +271,13 @@ map <leader>s? z=
 
 " Simplify pasting and copying to system clipboard
 map <leader>y "*y
-map <leader>Y "*Y
+map <leader>Y "*e
 map <leader>p "*p
 map <leader>P "*P
+
+set clipboard=unnamed 
+
+map <leader>d oimport pdb<ENTER>pdb.set_trace()<ESC>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
