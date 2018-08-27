@@ -1,0 +1,86 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" CJAPPL .vimrc 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                        .OO
+"                       .OOOO
+"                      .OOOO'
+"                      OOOO'          .-~~~~-.
+"                      OOO'          /   (o)(o)
+"              .OOOOOO `O .OOOOOOO. /      .. |
+"          .OOOOOOOOOOOO OOOOOOOOOO/\    \____/
+"        .OOOOOOOOOOOOOOOOOOOOOOOO/ \\   ,\_/
+"       .OOOOOOO%%OOOOOOOOOOOOO(#/\     /.
+"      .OOOOOO%%%OOOOOOOOOOOOOOO\ \\  \/OO.
+"     .OOOOO%%%%OOOOOOOOOOOOOOOOO\   \/OOOO.
+"     OOOOO%%%%OOOOOOOOOOOOOOOOOOO\_\/\OOOOO
+"     OOOOO%%%OOOOOOOOOOOOOOOOOOOOO\###)OOOO
+"     OOOOOO%%OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+"     OOOOOOO%OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+"     `OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'
+"   .-~~\OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'
+"  / _/  `\(#\OOOOOOOOOOOOOOOOOOOOOOOOOOOO'
+" / / \  / `~~\OOOOOOOOOOOOOOOOOOOOOOOOOO'
+"|/'  `\//  \\ \OOOOOOOOOOOOOOOOOOOOOOOO'
+"       `-.__\_,\OOOOOOOOOOOOOOOOOOOOO'
+"           `OO\#)OOOOOOOOOOOOOOOOOOO'
+"             `OOOOOOOOO''OOOOOOOOO'
+"               `""""""'  `""""""'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Set line numbers
+set number
+
+" Sets how many lines of history VIM has to remember
+set history=100
+
+" Enable filetype plugins
+filetype plugin on
+filetype indent on
+
+" Set to auto read when a file is changed from the outside
+set autoread
+
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+
+" Fast saving
+nmap ,w :w!<cr>
+
+" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" " => VIM user interface
+" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set 7 lines to the cursor - when moving vertically using j/k
+set scrolloff=3
+
+" Turn on the WiLd menu
+set wildmenu
+
+" Configure backspace so it acts as it should act
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+ 
+" Ignore case when searching
+set ignorecase
+
+" When searching try to be smart about cases 
+set smartcase
+
+" Highlight search results
+set hlsearch
+
+" Show matching brackets when text indicator is over them
+set showmatch 
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moving around, tabs, windows and buffers
+" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Treat long lines as break lines (useful when moving around in them)
+map j gj
+map k gk
+" Useful mappings for managing tabs
+map <leader>tn :tabnew<cr>
+map <leader>tc :tabclose<cr>
+" Splits
+map <leader>v :vs<cr>

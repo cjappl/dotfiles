@@ -72,6 +72,6 @@ alias .6 "cd ../../../../../.."
 
 # finding my ip address
 alias ip_addr "ifconfig en0 inet | grep inet"
+alias vim /usr/local/bin/nvim
 
 eval (python3 -m virtualfish auto_activation) 2> /dev/null
-

@@ -107,6 +107,10 @@ nmap <leader>w :w!<cr>
 " Disabling auto commenting 
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
+" disable search of certain folders
+"let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git|build|*.egg-info'
+let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git|*.egg-info'
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -121,7 +125,8 @@ set wildignore=*.o,*~,*.pyc
 if has("win16") || has("win32")
     set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 else
-    set wildignore+=.git\*,.hg\*,.svn\*,.tox\*,.build\*,.dist\*
+    "set wildignore+=.git\*,.hg\*,.svn\*,.tox\*,.build\*,.dist\*
+     set wildignore+=.git\*,.hg\*,.svn\*,.tox\*,.dist\*
 endif
 
 "Always show current position
