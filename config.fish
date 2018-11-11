@@ -37,18 +37,18 @@
 set -x PATH $PATH /usr/local/sbin
 set LEGACY ~/Documents/Code/First_workspace/depot/qa/tests/products/DCinema/main # Dcinema legacy area
 set DEMO ~/Documents/Code/First_workspace/depot/qa/tests/products/DCinema/main/demo 
-set MUSE ~/Documents/Code/museqa/devel/dj/sys-test
-set MUSE_MAIN ~/Documents/Code/museqa/
-set CONTROLLER "/Users/cjappl/Library/Application Support/Dolby DJ/Controller Mappings"
+set MUSE ~/Documents/Code/museqa/devel/dj/
+set CONTROLLER /Users/cjappl/Library/Application Support/Dolby DJ/Controller Mappings
 set PERSONAL /Users/cjappl/Documents/Code/personal
 
 # P4 
 set -x P4USER 'cjappl'
 set -x P4PORT 'perforce:1666'
-set -x P4CLIENT 'cjappl_CJAPPL-MBP_2200'
+set -x P4CLIENT 'museqa'
 set -x P4DIFF '/Applications/p4merge.app/Contents/MacOS/p4merge'
 
-set -x EDITOR 'vim'
+set -x EDITOR 'nvim'
+
 #######################################################################
 # => Aliases and functions
 #######################################################################
@@ -74,4 +74,5 @@ alias .6 "cd ../../../../../.."
 alias ip_addr "ifconfig en0 inet | grep inet"
 alias vim /usr/local/bin/nvim
 
-eval (python3 -m virtualfish auto_activation) 2> /dev/null
+# eval (python3 -m virtualfish auto_activation) 2> /dev/null
+eval (python3.5 -m virtualfish auto_activation) 
