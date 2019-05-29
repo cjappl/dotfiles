@@ -37,9 +37,11 @@
 set -x PATH $PATH /usr/local/sbin
 set LEGACY ~/Documents/Code/First_workspace/depot/qa/tests/products/DCinema/main # Dcinema legacy area
 set DEMO ~/Documents/Code/First_workspace/depot/qa/tests/products/DCinema/main/demo 
-set MUSE ~/Documents/Code/museqa/devel/dj/
+set MUSE_MAIN ~/Documents/Code/museqa/devel/
+set MUSE_105 ~/Documents/Code/museqa_rel_0.10.5/devel/
 set CONTROLLER /Users/cjappl/Library/Application Support/Dolby DJ/Controller Mappings
 set PERSONAL /Users/cjappl/Documents/Code/personal
+set EUROPA /Users/cjappl/Documents/Code/cjappl_europa_main/
 
 # P4 
 set -x P4USER 'cjappl'
@@ -58,6 +60,10 @@ function greppy -a pattern dir
     rg $pattern --type py -H $dir 
 end
 
+function rh -a pattern
+    rg $pattern -g "!contrib/*" -g "!build/*" -g "!MacOSX" -g "!tags" -g "!*.html" -g "!*.js"
+end
+
 function coverage_run -a src_dir test_dir
     coverage run --source $src_dir -m py.test $test_dir -v
     coverage report -m --fail-under=100
@@ -69,6 +75,10 @@ alias .3 "cd ../../.."
 alias .4 "cd ../../../.." 
 alias .5 "cd ../../../../.." 
 alias .6 "cd ../../../../../.." 
+
+alias cleanau "sudo rm -rf /Library/Audio/Plug-Ins/Components/Dolby\ Atmos\ Music\ Panner.audiocomp/"
+
+alias makebuildtest "cmake .. && make && ctest ."
 
 # finding my ip address
 alias ip_addr "ifconfig en0 inet | grep inet"

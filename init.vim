@@ -40,13 +40,14 @@ call vundle#begin()
 
 " Plugins
 Plugin 'VundleVim/Vundle.vim' " Bundler
-"Plugin 'scrooloose/syntastic' " auto syntax checking
 Plugin 'w0rp/ale' " auto syntax checking
 Plugin 'ctrlpvim/ctrlp.vim' " fuzzy search file finding
 Plugin 'roxma/python-support.nvim'
 Plugin 'jremmen/vim-ripgrep' " recursive grep 
-Plugin 'roxma/nvim-completion-manager'
-Plugin 'gfontenot/vim-xcode'
+Plugin 'pboettch/vim-cmake-syntax'
+Plugin 'ncm2/ncm2'
+Plugin 'ncm2/ncm2_pyclang'
+
 
 " End configuration, makes the plugins available
 call vundle#end()
@@ -54,7 +55,19 @@ call vundle#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => nvim completion manager 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-Plugin 'roxma/ncm-clang'
+
+" enable ncm2 for all buffers
+autocmd BufEnter * call ncm2#enable_for_buffer()
+
+" IMPORTANT: :help Ncm2PopupOpen for more information
+set completeopt=noinsert,menuone,noselect
+
+let g:ncm2_pyclang#library_path = '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/libclang.dylib'
+
+let g:ncm2_pyclang#database_path = [
+            \ 'compile_commands.json',
+            \ 'build/compile_commands.json'
+            \ ]
 
 " necessary to install python completion
 let g:python_support_python2_require = 0  " don't need python2 for now, since we're using 3
@@ -62,16 +75,17 @@ let g:python_support_python3_requirements = extend(get(g:,'python_support_python
 
 " tab completion for complete menu
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 " When the <Enter> key is pressed while the popup menu is visible, it only hides
 " the menu. Use this mapping to hide the menu and also start a new line.
-inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+"inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+"
 
-" libclang for c++ completion
-let g:clang_library_path = '/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
 
-" ALE (linter)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Ale 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " NOTE: ALE currently doesn't work on C++ header files: https://github.com/w0rp/ale/issues/782
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '⚠'
@@ -94,7 +108,18 @@ let g:ale_fixers = {'python': ['remove_trailing_lines', 'trim_whitespace'],
             \ 'cpp': ['remove_trailing_lines']
             \ }
 
-let g:ale_linters = {'cpp': []}
+" so the clang checker can find the compile_commands.json file
+let g:ale_c_build_dir_names = ['build']
+
+"let g:ale_cpp_clangtidy_checks = ['*,-google*,-cppcoreguidelines-*,-*implicit-bool-cast,']
+let g:ale_cpp_clangtidy_checks = ['*,-google*']
+
+let g:ale_cpp_clang_options = '-std=c++14 -Wall'
+
+let g:ale_linters = {'c': ['clangcheck', 'clangtidy'],
+            \ 'cpp': ['clangcheck', 'clangtidy', 'cppcheck'],
+            \ 'h':   ['clangcheck', 'clangtidy', 'cppcheck'],
+            \}
 
 " Fix on save
 let g:ale_fix_on_save = 1
@@ -139,10 +164,12 @@ autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 " disable search of certain folders
 let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/](log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
+    \ 'dir': '\v[\/](build*|MacOSX|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
     \ 'file': '\v\.(so|swp|zip|gz|tar|png|jpg|pyc)$'
     \ }
 let g:ctrlp_cmd = 'CtrlP'
+
+nnoremap <leader>. :CtrlPTag<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
