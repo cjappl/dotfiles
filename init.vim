@@ -1,5 +1,4 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" CJAPPL .vimrc 
+" CJAPPL .vimrc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                        .OO
 "                       .OOOO
@@ -43,17 +42,43 @@ Plugin 'VundleVim/Vundle.vim' " Bundler
 Plugin 'w0rp/ale' " auto syntax checking
 Plugin 'ctrlpvim/ctrlp.vim' " fuzzy search file finding
 Plugin 'roxma/python-support.nvim'
-Plugin 'jremmen/vim-ripgrep' " recursive grep 
+Plugin 'jremmen/vim-ripgrep' " recursive grep
 Plugin 'pboettch/vim-cmake-syntax'
 Plugin 'ncm2/ncm2'
-Plugin 'ncm2/ncm2_pyclang'
+Plugin 'roxma/nvim-yarp'
+Plugin 'ncm2/ncm2-pyclang'
+Plugin 'ncm2/ncm2-jedi'
+Plugin 'craigemery/vim-autotag'
 
 
 " End configuration, makes the plugins available
 call vundle#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => nvim completion manager 
+" => Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Enable syntax highlighting
+syntax enable
+
+try
+    colorscheme desert
+catch
+endtry
+
+set background=dark
+
+" Set utf8 as standard encoding and en_US as the standard language
+set encoding=utf8
+
+" Use unix as the standard file type
+set ffs=unix
+
+" highlight colors
+hi Search ctermbg=grey
+hi Search ctermfg=black
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => nvim completion manager
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " enable ncm2 for all buffers
@@ -69,29 +94,21 @@ let g:ncm2_pyclang#database_path = [
             \ 'build/compile_commands.json'
             \ ]
 
-" necessary to install python completion
-let g:python_support_python2_require = 0  " don't need python2 for now, since we're using 3
-let g:python_support_python3_requirements = extend(get(g:,'python_support_python3_requirements',[]), ['flake8','cmakelint','autopep8','rstcheck','pydocstyle','jedi','vint'])
-
-" tab completion for complete menu
+" When the <Enter> key is pressed while the popup menu is visible, it only
+" hides the menu. Use this mapping to close the menu and also start a new
+" line.
+inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-" When the <Enter> key is pressed while the popup menu is visible, it only hides
-" the menu. Use this mapping to hide the menu and also start a new line.
-"inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
-"
-
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Ale 
+" => Ale
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " NOTE: ALE currently doesn't work on C++ header files: https://github.com/w0rp/ale/issues/782
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '⚠'
 let g:ale_statusline_format =[' %d E ', ' %d W ', '']
 let g:ale_lint_on_text_changed = 'never'  " run lint in normal mode only
-let g:ale_lint_on_insert_leave = 1  " run lint when leaving insert mode(good when ale_lint_on_text_changed is 'normal')
 " suggested linters:
 "     pip-install: cmakelint, flake8, autopep8, rstcheck, pydocstyle
 "     brew install: shellcheck(takes forever to install)
@@ -114,12 +131,15 @@ let g:ale_c_build_dir_names = ['build']
 "let g:ale_cpp_clangtidy_checks = ['*,-google*,-cppcoreguidelines-*,-*implicit-bool-cast,']
 let g:ale_cpp_clangtidy_checks = ['*,-google*']
 
-let g:ale_cpp_clang_options = '-std=c++14 -Wall'
+let g:ale_cpp_clang_options = '-Wall -Wpedantic'
 
-let g:ale_linters = {'c': ['clangcheck', 'clangtidy'],
-            \ 'cpp': ['clangcheck', 'clangtidy', 'cppcheck'],
-            \ 'h':   ['clangcheck', 'clangtidy', 'cppcheck'],
-            \}
+let g:ale_linters = {'py': ['flake8'],
+  \ 'cpp': ['clang', 'clangcheck', 'clangtidy', 'cppcheck'],
+  \ 'h': ['clang', 'clangcheck', 'clangtidy', 'cppcheck'],
+  \ 'hpp': ['clang', 'clangcheck', 'clangtidy', 'cppcheck'],
+  \}
+
+let g:ale_c_parse_compile_commands=1
 
 " Fix on save
 let g:ale_fix_on_save = 1
@@ -129,13 +149,15 @@ nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 " Map Ctrl-C to Escape, mainly to trigger autocmd for ALE when exiting insert mode
-inoremap <C-c> <Esc>
+"inoremap <C-c> <Esc>
+"let g:ale_lint_on_insert_leave = 1  " run lint when leaving insert mode(good when ale_lint_on_text_changed is 'normal')
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set line numbers
 set number
+set relativenumber
 
 " Sets how many lines of history VIM has to remember
 set history=100
@@ -144,27 +166,33 @@ set history=100
 filetype plugin on
 filetype indent on
 
-" Set to auto read when a file is changed from the outside
+" Set to auto read when a file is changed
 set autoread
+
+" autoread even when changed outside of vim
+au FocusGained,BufEnter * :silent! !
+au FocusLost,WinLeave * :silent! w
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
-let mapleader = ","
-let g:mapleader = ","
+let mapleader=" "
 
 " Fast saving
 nmap <leader>w :w!<cr>
 
-" Disabling auto commenting 
+" start typing a search/replace command using current word
+nnoremap <Leader>s :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
+
+" Disabling auto commenting
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => ctrlp 
+" => ctrlp
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " disable search of certain folders
 let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/](build*|MacOSX|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
+    \ 'dir': '\v[\/](contrib|build*|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
     \ 'file': '\v\.(so|swp|zip|gz|tar|png|jpg|pyc)$'
     \ }
 let g:ctrlp_cmd = 'CtrlP'
@@ -175,9 +203,9 @@ nnoremap <leader>. :CtrlPTag<cr>
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
-set scrolloff=3
+set scrolloff=7
 
-" Turn on the WiLd menu
+" Turn on the WiLd menu, tab completion of commands
 set wildmenu
 
 " Ignore compiled files
@@ -193,7 +221,9 @@ set ruler
 
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
-set whichwrap+=<,>,h,l
+
+" allows h and l to move to the next line if at a boundary
+set whichwrap+=h,l
 
 " Ignore case when searching
 set ignorecase
@@ -205,16 +235,13 @@ set smartcase
 set hlsearch
 
 " Don't redraw while executing macros (good performance config)
-set lazyredraw 
-
-" For regular expressions turn magic on
-"set magic
+set lazyredraw
 
 " split and automatically move to new pane
-set splitright  
+set splitright
 
 " Show matching brackets when text indicator is over them
-set showmatch 
+set showmatch
 
 " How many tenths of a second to blink when matching brackets
 set mat=2
@@ -225,24 +252,6 @@ set novisualbell
 set t_vb=
 set tm=500
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Colors and Fonts
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Enable syntax highlighting
-syntax enable 
-
-try
-    colorscheme desert
-catch
-endtry
-
-set background=dark
-
-" Set utf8 as standard encoding and en_US as the standard language
-set encoding=utf8
-
-" Use unix as the standard file type
-set ffs=unix
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -280,14 +289,11 @@ map j gj
 map k gk
 
 " Smart way to move between windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
 " Useful mappings for managing tabs
-map <leader>tn :tabnew<cr>
-map <leader>tc :tabclose<cr>
+map <leader>t :tabnew<cr>
 
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
@@ -300,10 +306,6 @@ set viminfo^=%
 " Splits
 map <leader>v :vs<cr>
 
-map <F5> :cp<ENTER>
-map <F6> :cn<ENTER>
-
-
 """"""""""""""""""""""""""""""
 " => Status line
 """"""""""""""""""""""""""""""
@@ -314,16 +316,21 @@ set laststatus=2
 set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Editing mappings
+" => Deleting whitespace
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Delete trailing white space on save, useful for Python and CoffeeScript ;)
+" Delete trailing white space on save
 func! DeleteTrailingWS()
   exe "normal mz"
   %s/\s\+$//ge
   exe "normal `z"
 endfunc
+
 autocmd BufWrite *.py :call DeleteTrailingWS()
-autocmd BufWrite *.coffee :call DeleteTrailingWS()
+
+autocmd BufWrite *.cpp :call DeleteTrailingWS()
+autocmd BufWrite *.h :call DeleteTrailingWS()
+
+autocmd BufWrite *.vim :call DeleteTrailingWS()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Spell checking
@@ -347,7 +354,7 @@ map <leader>Y "*e
 map <leader>p "*p
 map <leader>P "*P
 
-set clipboard=unnamed 
+set clipboard=unnamed
 
 map <leader>d oimport pdb<ENTER>pdb.set_trace()<ESC>
 
@@ -368,3 +375,47 @@ endfunction
 " Enable per project nvimrc
 set exrc
 set secure
+
+function! HeaderSwitch()
+    let l:extension = expand("%:e")
+
+    if match(l:extension, "cpp") < 0 && match(l:extension, "h") < 0
+        return
+    endif
+
+  if match(expand("%"), '\.c') > 0
+    let l:next_file = substitute(".*\\\/" . expand("%:t"), '\.c\(.*\)', '.h[a-z]*', "")
+  elseif match(expand("%"), "\\.h") > 0
+    let l:next_file = substitute(".*\\\/" . expand("%:t"), '\.h\(.*\)', '.c[a-z]*', "")
+  endif
+
+  if exists("b:previous_file") && b:previous_file == l:next_file
+    e#
+  else
+    let l:directory_name = fnamemodify(expand("%:p"), ":h")
+    " At this point cmd might evaluate to something of the format:
+    let l:cmd="find " . l:directory_name . " . -type f -iregex \""  . l:next_file . "\" -print -quit"
+
+    " The substitute gets rid of the new line at the end of the result. The
+    " function `filereadable` does not like the newline that `find` puts at
+    " the end of the result and will not acknowledge that the file exists.
+    let l:result = substitute(system(l:cmd), '\n', '', '')
+
+    if filereadable(l:result)
+        let l:bnr = bufwinnr(l:result)
+        if l:bnr > 0
+            exe l:bnr . "wincmd w"
+        else
+          exe "vs " l:result
+        endif
+    endif
+  endif
+endfun
+
+nnoremap <silent> <tab> :call HeaderSwitch()<CR>
+
+" auto reload vimrc
+augroup myvimrc
+    au!
+    au BufWritePost .vimrc,init.vim so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
+augroup END
