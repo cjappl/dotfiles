@@ -41,12 +41,17 @@ set MUSE_MAIN ~/Documents/Code/museqa/devel/
 set MUSE_105 ~/Documents/Code/museqa_rel_0.10.5/devel/
 set CONTROLLER /Users/cjappl/Library/Application Support/Dolby DJ/Controller Mappings
 set PERSONAL /Users/cjappl/Documents/Code/personal
+
 set EUROPA /Users/cjappl/Documents/Code/cjappl_europa_main/
+
+set AU ~/Library/Audio/Plug-Ins/Components
+set VST ~/Library/Audio/Plug-Ins/VST3
+set AAX "/Library/Application Support/Avid/Audio/Plug-Ins/"
 
 # P4 
 set -x P4USER 'cjappl'
 set -x P4PORT 'perforce:1666'
-set -x P4CLIENT 'museqa'
+set -x P4CLIENT 'cjappl_europa_main'
 set -x P4DIFF '/Applications/p4merge.app/Contents/MacOS/p4merge'
 
 set -x EDITOR 'nvim'
@@ -75,8 +80,6 @@ alias .3 "cd ../../.."
 alias .4 "cd ../../../.." 
 alias .5 "cd ../../../../.." 
 alias .6 "cd ../../../../../.." 
-
-alias cleanau "sudo rm -rf /Library/Audio/Plug-Ins/Components/Dolby\ Atmos\ Music\ Panner.audiocomp/"
 
 alias makebuildtest "cmake .. && make && ctest ."
 

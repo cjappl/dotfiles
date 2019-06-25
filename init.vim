@@ -128,8 +128,7 @@ let g:ale_fixers = {'python': ['remove_trailing_lines', 'trim_whitespace'],
 " so the clang checker can find the compile_commands.json file
 let g:ale_c_build_dir_names = ['build']
 
-"let g:ale_cpp_clangtidy_checks = ['*,-google*,-cppcoreguidelines-*,-*implicit-bool-cast,']
-let g:ale_cpp_clangtidy_checks = ['*,-google*']
+let g:ale_cpp_clangtidy_checks = ["*,-google*,-llvm-header-guard,-*special-member-functions,-readability-else-after-return,-*uppercase-literal-suffix,-modernize-return-braced-init-list,-misc-unused-parameters,-*use-equals-default"]
 
 let g:ale_cpp_clang_options = '-Wall -Wpedantic'
 

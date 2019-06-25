@@ -4,3 +4,51 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
+;	init.vim	/^nnoremap ; :$/;"	m
+<C-h>	init.vim	/^map <C-h> <C-W>h$/;"	m
+<C-j>	init.vim	/^nmap <silent> <C-j> <Plug>(ale_next_wrap)$/;"	m
+<C-k>	init.vim	/^nmap <silent> <C-k> <Plug>(ale_previous_wrap)$/;"	m
+<C-l>	init.vim	/^map <C-l> <C-W>l$/;"	m
+<CR>	init.vim	/^inoremap <expr> <CR> (pumvisible() ? "\\<c-y>\\<cr>" : "\\<CR>")$/;"	m
+<Leader>s	init.vim	/^nnoremap <Leader>s :%s\/\\<<C-r><C-w>\\>\/\/gc<Left><Left><Left>$/;"	m
+<S-Tab>	init.vim	/^inoremap <expr> <S-Tab> pumvisible() ? "\\<C-p>" : "\\<S-Tab>"$/;"	m
+<Tab>	init.vim	/^inoremap <expr> <Tab> pumvisible() ? "\\<C-n>" : "\\<Tab>"$/;"	m
+<leader>.	init.vim	/^nnoremap <leader>. :CtrlPTag<cr>$/;"	m
+<leader>P	init.vim	/^map <leader>P "*P$/;"	m
+<leader>Y	init.vim	/^map <leader>Y "*e$/;"	m
+<leader>d	init.vim	/^map <leader>d oimport pdb<ENTER>pdb.set_trace()<ESC>$/;"	m
+<leader>p	init.vim	/^map <leader>p "*p$/;"	m
+<leader>s?	init.vim	/^map <leader>s? z=$/;"	m
+<leader>sa	init.vim	/^map <leader>sa zg$/;"	m
+<leader>sn	init.vim	/^map <leader>sn ]s$/;"	m
+<leader>sp	init.vim	/^map <leader>sp [s$/;"	m
+<leader>ss	init.vim	/^map <leader>ss :setlocal spell!<cr>$/;"	m
+<leader>t	init.vim	/^map <leader>t :tabnew<cr>$/;"	m
+<leader>v	init.vim	/^map <leader>v :vs<cr>$/;"	m
+<leader>w	init.vim	/^nmap <leader>w :w!<cr>$/;"	m
+<leader>y	init.vim	/^map <leader>y "*y$/;"	m
+<tab>	init.vim	/^nnoremap <silent> <tab> :call HeaderSwitch()<CR>$/;"	m
+DeleteTrailingWS	init.vim	/^func! DeleteTrailingWS()$/;"	f
+HasPaste	init.vim	/^function! HasPaste()$/;"	f
+HeaderSwitch	init.vim	/^function! HeaderSwitch()$/;"	f
+g:ale_c_build_dir_names	init.vim	/^let g:ale_c_build_dir_names = ['build']$/;"	v
+g:ale_c_parse_compile_commands	init.vim	/^let g:ale_c_parse_compile_commands=1$/;"	v
+g:ale_cpp_clang_options	init.vim	/^let g:ale_cpp_clang_options = '-Wall -Wpedantic'$/;"	v
+g:ale_cpp_clangtidy_checks	init.vim	/^let g:ale_cpp_clangtidy_checks = ['*,-google*']$/;"	v
+g:ale_fix_on_save	init.vim	/^let g:ale_fix_on_save = 1$/;"	v
+g:ale_fixers	init.vim	/^let g:ale_fixers = {'python': ['remove_trailing_lines', 'trim_whitespace'],$/;"	v
+g:ale_lint_on_text_changed	init.vim	/^let g:ale_lint_on_text_changed = 'never'  " run lint in normal mode only$/;"	v
+g:ale_linters	init.vim	/^let g:ale_linters = {'py': ['flake8'],$/;"	v
+g:ale_python_flake8_options	init.vim	/^let g:ale_python_flake8_options = '--ignore=E501'$/;"	v
+g:ale_sign_error	init.vim	/^let g:ale_sign_error = '✖'$/;"	v
+g:ale_sign_warning	init.vim	/^let g:ale_sign_warning = '⚠'$/;"	v
+g:ale_statusline_format	init.vim	/^let g:ale_statusline_format =[' %d E ', ' %d W ', '']$/;"	v
+g:ale_virtualenv_dir_names	init.vim	/^let g:ale_virtualenv_dir_names = [$/;"	v
+g:ctrlp_cmd	init.vim	/^let g:ctrlp_cmd = 'CtrlP'$/;"	v
+g:ctrlp_custom_ignore	init.vim	/^let g:ctrlp_custom_ignore = {$/;"	v
+g:ncm2_pyclang#database_path	init.vim	/^let g:ncm2_pyclang#database_path = [$/;"	v
+g:ncm2_pyclang#library_path	init.vim	/^let g:ncm2_pyclang#library_path = '\/Applications\/Xcode.app\/Contents\/Developer\/Toolchains\/XcodeDefault.xctoolchain\/usr\/lib\/libclang.dylib'$/;"	v
+j	init.vim	/^map j gj$/;"	m
+k	init.vim	/^map k gk$/;"	m
+mapleader	init.vim	/^let mapleader=" "$/;"	v
+myvimrc	init.vim	/^augroup myvimrc$/;"	a
