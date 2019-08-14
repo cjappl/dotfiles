@@ -41,44 +41,29 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim' " Bundler
 Plugin 'w0rp/ale' " auto syntax checking
 Plugin 'ctrlpvim/ctrlp.vim' " fuzzy search file finding
-Plugin 'roxma/python-support.nvim'
+Plugin 'roxma/python-support.nvim'  " requirement for some other packages
 Plugin 'jremmen/vim-ripgrep' " recursive grep
-Plugin 'pboettch/vim-cmake-syntax'
-Plugin 'ncm2/ncm2'
-Plugin 'roxma/nvim-yarp'
-Plugin 'ncm2/ncm2-pyclang'
-Plugin 'ncm2/ncm2-jedi'
-Plugin 'craigemery/vim-autotag'
+Plugin 'pboettch/vim-cmake-syntax'  " syntax highlighting for cmake
+Plugin 'ncm2/ncm2'      " autocomplete engine
+Plugin 'roxma/nvim-yarp'   " c++ autocomplete
+Plugin 'ncm2/ncm2-pyclang' " python autocomplete
+Plugin 'ncm2/ncm2-jedi'  " python autocomplete
+Plugin 'craigemery/vim-autotag' " auto ctagging
+"Plugin 'sbdchd/neoformat' " code styling
 
 
 " End configuration, makes the plugins available
 call vundle#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Colors and Fonts
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Enable syntax highlighting
-syntax enable
-
-try
-    colorscheme desert
-catch
-endtry
-
-set background=dark
-
-" Set utf8 as standard encoding and en_US as the standard language
-set encoding=utf8
-
-" Use unix as the standard file type
-set ffs=unix
-
-" highlight colors
-hi Search ctermbg=grey
-hi Search ctermfg=black
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => nvim completion manager
+"let g:neoformat_cpp_astyle = {
+"            \ 'exe': 'astyle',
+"            \ 'args': ['--project']
+"            \ }
+
+let g:neoformat_verbose = 1
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " enable ncm2 for all buffers
@@ -128,14 +113,14 @@ let g:ale_fixers = {'python': ['remove_trailing_lines', 'trim_whitespace'],
 " so the clang checker can find the compile_commands.json file
 let g:ale_c_build_dir_names = ['build']
 
-let g:ale_cpp_clangtidy_checks = ["*,-google*,-llvm-header-guard,-*special-member-functions,-readability-else-after-return,-*uppercase-literal-suffix,-modernize-return-braced-init-list,-misc-unused-parameters,-*use-equals-default"]
+let g:ale_cpp_clangtidy_checks = ["*,-google*,-llvm-header-guard,-*special-member-functions,-readability-else-after-return,-*uppercase-literal-suffix,-modernize-return-braced-init-list,-misc-unused-parameters,-*use-equals-default,-readability-const-return-type"]
 
 let g:ale_cpp_clang_options = '-Wall -Wpedantic'
 
 let g:ale_linters = {'py': ['flake8'],
-  \ 'cpp': ['clang', 'clangcheck', 'clangtidy', 'cppcheck'],
-  \ 'h': ['clang', 'clangcheck', 'clangtidy', 'cppcheck'],
-  \ 'hpp': ['clang', 'clangcheck', 'clangtidy', 'cppcheck'],
+  \ 'cpp': ['clang', 'clangcheck', 'clangtidy'],
+  \ 'h': ['clang', 'clangcheck', 'clangtidy'],
+  \ 'hpp': ['clang', 'clangcheck', 'clangtidy'],
   \}
 
 let g:ale_c_parse_compile_commands=1
@@ -152,11 +137,47 @@ nmap <silent> <C-j> <Plug>(ale_next_wrap)
 "let g:ale_lint_on_insert_leave = 1  " run lint when leaving insert mode(good when ale_lint_on_text_changed is 'normal')
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => ctrlp
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" disable search of certain folders
+let g:ctrlp_custom_ignore = {
+    \ 'dir': '\v[\/](contrib|build|build_OSX|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
+    \ 'file': '\v\.(so|swp|zip|gz|tar|png|jpg|pyc)$'
+    \ }
+let g:ctrlp_cmd = 'CtrlP'
+
+nnoremap <leader>. :CtrlPTag<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Enable syntax highlighting
+syntax enable
+
+try
+    colorscheme desert
+catch
+endtry
+
+set background=dark
+
+" Set utf8 as standard encoding and en_US as the standard language
+set encoding=utf8
+
+" Use unix as the standard file type
+set ffs=unix
+
+" highlight colors
+hi Search ctermbg=grey
+hi Search ctermfg=black
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set line numbers
 set number
-set relativenumber
 
 " Sets how many lines of history VIM has to remember
 set history=100
@@ -185,18 +206,6 @@ nnoremap <Leader>s :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 " Disabling auto commenting
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => ctrlp
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" disable search of certain folders
-let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/](contrib|build*|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
-    \ 'file': '\v\.(so|swp|zip|gz|tar|png|jpg|pyc)$'
-    \ }
-let g:ctrlp_cmd = 'CtrlP'
-
-nnoremap <leader>. :CtrlPTag<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface

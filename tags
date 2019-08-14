@@ -34,7 +34,7 @@ HeaderSwitch	init.vim	/^function! HeaderSwitch()$/;"	f
 g:ale_c_build_dir_names	init.vim	/^let g:ale_c_build_dir_names = ['build']$/;"	v
 g:ale_c_parse_compile_commands	init.vim	/^let g:ale_c_parse_compile_commands=1$/;"	v
 g:ale_cpp_clang_options	init.vim	/^let g:ale_cpp_clang_options = '-Wall -Wpedantic'$/;"	v
-g:ale_cpp_clangtidy_checks	init.vim	/^let g:ale_cpp_clangtidy_checks = ['*,-google*']$/;"	v
+g:ale_cpp_clangtidy_checks	init.vim	/^let g:ale_cpp_clangtidy_checks = ["*,-google*,-llvm-header-guard,-*special-member-functions,-readability-else-after-return,-*uppercase-literal-suffix,-modernize-return-braced-init-list,-misc-unused-parameters,-*use-equals-default,-readability-const-return-type"]$/;"	v
 g:ale_fix_on_save	init.vim	/^let g:ale_fix_on_save = 1$/;"	v
 g:ale_fixers	init.vim	/^let g:ale_fixers = {'python': ['remove_trailing_lines', 'trim_whitespace'],$/;"	v
 g:ale_lint_on_text_changed	init.vim	/^let g:ale_lint_on_text_changed = 'never'  " run lint in normal mode only$/;"	v
