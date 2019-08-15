@@ -50,12 +50,12 @@ set VST ~/Library/Audio/Plug-Ins/VST3
 set AAX "/Library/Application Support/Avid/Audio/Plug-Ins/"
 
 # P4 
-#set -x P4USER 'cjappl'
-#set -x P4PORT 'perforce:1666'
-#set -x P4CLIENT 'cjappl_europa_main'
-#set -x P4DIFF '/Applications/p4merge.app/Contents/MacOS/p4merge'
-
-#set -x EDITOR 'nvim'
+set -x P4USER 'cjappl'
+set -x P4PORT 'perforce:1666'
+set -x P4CLIENT 'cjappl_europa_main'
+set -x P4DIFF 'nvim -d'
+set -x EDITOR 'nvim'
+set -x P4MERGE '/Applications/p4merge.app/Contents/MacOS/p4merge'
 
 #######################################################################
 # => Aliases and functions

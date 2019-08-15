@@ -198,7 +198,7 @@ au FocusLost,WinLeave * :silent! w
 let mapleader=" "
 
 " Fast saving
-nmap <leader>w :w!<cr>
+nmap <leader>w :w<cr>
 
 " start typing a search/replace command using current word
 nnoremap <Leader>s :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
@@ -301,7 +301,7 @@ map <C-h> <C-W>h
 map <C-l> <C-W>l
 
 " Useful mappings for managing tabs
-map <leader>t :tabnew<cr>
+map <silent> <leader>t :tabnew<cr>
 
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
@@ -313,6 +313,12 @@ set viminfo^=%
 
 " Splits
 map <leader>v :vs<cr>
+
+""""""""""""""""""""""""""""""
+" => p4 mappings
+""""""""""""""""""""""""""""""
+map <silent> <leader>e :!p4 edit %<cr>
+map <silent> <leader>r :!p4 revert %<cr>
 
 """"""""""""""""""""""""""""""
 " => Status line
