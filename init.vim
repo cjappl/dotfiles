@@ -124,6 +124,7 @@ let g:ale_linters = {'py': ['flake8'],
   \}
 
 let g:ale_c_parse_compile_commands=1
+let g:ale_c_parse_makefile=1
 
 " Fix on save
 let g:ale_fix_on_save = 1
@@ -198,7 +199,7 @@ au FocusLost,WinLeave * :silent! w
 let mapleader=" "
 
 " Fast saving
-nmap <leader>w :w<cr>
+nmap <leader>w :w!<cr>
 
 " start typing a search/replace command using current word
 nnoremap <Leader>s :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
@@ -241,6 +242,9 @@ set smartcase
 
 " Highlight search results
 set hlsearch
+
+" incrementally search, moving each time a key is pressed
+set incsearch
 
 " Don't redraw while executing macros (good performance config)
 set lazyredraw
@@ -393,7 +397,8 @@ set secure
 function! HeaderSwitch()
     let l:extension = expand("%:e")
 
-    if match(l:extension, "cpp") < 0 && match(l:extension, "h") < 0
+    if match(l:extension, "cpp") < 0 && match(l:extension, "h") < 0 && match(l:extension, "c") < 0
+        echo "blah"
         return
     endif
 
@@ -414,6 +419,12 @@ function! HeaderSwitch()
     " function `filereadable` does not like the newline that `find` puts at
     " the end of the result and will not acknowledge that the file exists.
     let l:result = substitute(system(l:cmd), '\n', '', '')
+
+    if l:result != 0
+        echo "Shit went wrong"
+        echo l:cmd
+        echo l:result
+    endif
 
     if filereadable(l:result)
         let l:bnr = bufwinnr(l:result)

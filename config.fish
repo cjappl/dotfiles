@@ -42,6 +42,7 @@ set MUSE_105 ~/Documents/Code/museqa_rel_0.10.5/devel/
 set CONTROLLER /Users/cjappl/Library/Application Support/Dolby DJ/Controller Mappings
 set PERSONAL /Users/cjappl/Documents/Code/personal
 set WORK_TRIALS /Users/cjappl/Documents/Code/work_trials
+set OS_CLASS ~/Documents/Code/operating_systems
 
 set EUROPA /Users/cjappl/Documents/Code/cjappl_europa_main/
 
@@ -87,7 +88,7 @@ alias .4 "cd ../../../.."
 alias .5 "cd ../../../../.." 
 alias .6 "cd ../../../../../.." 
 
-alias makebuildtest "cmake .. && make && ctest ."
+alias makebuildtest "cmake .. && cmake --build . && ctest . -C Debug -VV"
 
 # finding my ip address
 alias ip_addr "ifconfig en0 inet | grep inet"
@@ -99,7 +100,7 @@ eval (python3.5 -m virtualfish auto_activation)
 alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.cache"
 
 #######################################################################
-# => Remapping keys  
+# => Utility functions
 #######################################################################
 
 # Enable ctrl + f for auto complete 
@@ -108,4 +109,60 @@ function fish_user_key_bindings
     for mode in insert default visual
         bind -M $mode \cf forward-char
     end
+end
+
+function please
+  if count $argv > /dev/null
+    if [ $history[$argv[1]] = "please" ]
+      please (math $argv[1] + 1)
+    else
+      eval command sudo $history[$argv[1]]
+    end
+  else
+    please 1
+  end
+end
+
+#######################################################################
+# => Fzf functions 
+#######################################################################
+
+set -x FZF_DEFAULT_COMMAND 'rg --files 2> /dev/null'
+set -x FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
+set -x FZF_CTRL_T_OPTS '--height=70% --preview="cat {} 2> /dev/null" --preview-window=right:60%:wrap'
+set -x FZF_CTRL_R_OPTS ''
+
+function fcd
+    if set -q argv[1]
+        set searchdir $argv[1]
+    else
+        set searchdir $HOME
+    end
+
+    # https://github.com/fish-shell/fish-shell/issues/1362
+    set -l tmpfile (mktemp)
+    #rg --hidden --files -g "!*tox"  $searchdir 2> /dev/null | xargs -I {} dirname {} | uniq | fzf > $tmpfile
+    find $searchdir \( ! -regex '.*/\..*' \) ! -name __pycache__ -type d  2> /dev/null | fzf > $tmpfile
+    set -l destdir (cat $tmpfile)
+    rm -f $tmpfile
+
+    if test -z "$destdir"
+        return 1
+    end
+
+    cd $destdir
+end
+
+function fkill --description "Kill processes"
+  set -l __fkill__pid (ps -ef | sed 1d | eval "fzf $FZF_DEFAULT_OPTS -m --header='[kill:process]'" | awk '{print $2}')
+  set -l __fkill__kc $argv[1]
+
+  if test "x$__fkill__pid" != "x"
+    if test "x$argv[1]" != "x"
+      echo $__fkill__pid | xargs kill $argv[1]
+    else
+      echo $__fkill__pid | xargs kill -9
+    end
+    fkill
+  end
 end
