@@ -127,10 +127,8 @@ end
 # => Fzf functions 
 #######################################################################
 
-set -x FZF_DEFAULT_COMMAND 'rg --files 2> /dev/null'
-set -x FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
+#set -x FZF_DEFAULT_COMMAND 'rg --files 2> /dev/null'
 set -x FZF_CTRL_T_OPTS '--height=70% --preview="cat {} 2> /dev/null" --preview-window=right:60%:wrap'
-set -x FZF_CTRL_R_OPTS ''
 
 function fcd
     if set -q argv[1]
