@@ -34,17 +34,15 @@
 # remote logins (ssh)
 
 # PATHS (cd)
-#  set -x PATH $PATH /usr/local/sbin
-set LEGACY ~/Documents/Code/First_workspace/depot/qa/tests/products/DCinema/main # Dcinema legacy area
-set DEMO ~/Documents/Code/First_workspace/depot/qa/tests/products/DCinema/main/demo 
-set MUSE_MAIN ~/Documents/Code/museqa/devel/
-set MUSE_105 ~/Documents/Code/museqa_rel_0.10.5/devel/
-set CONTROLLER /Users/cjappl/Library/Application Support/Dolby DJ/Controller Mappings
-set PERSONAL /Users/cjappl/Documents/Code/personal
-set WORK_TRIALS /Users/cjappl/Documents/Code/work_trials
+set PERSONAL ~/Documents/Code/personal
+set WORK_TRIALS ~/Documents/Code/work_trials
 set OS_CLASS ~/Documents/Code/operating_systems
+set DOTFILES ~/dotfiles
 
-set EUROPA /Users/cjappl/Documents/Code/cjappl_europa_main/
+set MUSE_MAIN ~/Documents/Code/museqa/devel/
+
+set EUROPA ~/Documents/Code/cjappl_europa_main/
+set EUROPA_PANNER_01 ~/Documents/Code/cjappl_europa_panner_01
 
 set AU ~/Library/Audio/Plug-Ins/Components
 set VST ~/Library/Audio/Plug-Ins/VST3
@@ -62,12 +60,15 @@ set -x P4MERGE '/Applications/p4merge.app/Contents/MacOS/p4merge'
 # => Aliases and functions
 #######################################################################
 
-# grep for python files recursively from dir and lower
-function greppy -a pattern dir
+function rgpy -a pattern dir
     rg $pattern --type py -H $dir 
 end
 
-function rh -a pattern 
+function rgcpp -a pattern dir
+    rg $pattern --type cpp -H $dir 
+end
+
+function reuropa -a pattern 
     rg $pattern -g "!contrib/*" -g "!build*/*" -g "!MacOSX" -g "!tags" -g "!*.html" -g "!*.js" 
 end
 
@@ -76,12 +77,13 @@ function coverage_run -a src_dir test_dir
     coverage report -m --fail-under=100
 end
 
-function find_and_replace -a dir oldtext newtext
-    #find $dir -type f -print0 | xargs -0 sed -i '' 's/$oldtext/$newtext/g'
-    find $dir -type f -exec sed -i '' -e 's/$oldtext/$newtext/g' {} \;
+function find_and_replace -a oldtext newtext dir
+    if set -q $dir 
+        set dir "."
+    end
+    rg -l "$oldtext" -0 $dir | xargs -p -0 sed -i '' -e "s/$oldtext/$newtext/g"
 end
 
-alias .1 "cd .." 
 alias .2 "cd ../.." 
 alias .3 "cd ../../.." 
 alias .4 "cd ../../../.." 
@@ -92,9 +94,11 @@ alias makebuildtest "cmake .. && cmake --build . && ctest . -C Debug -VV"
 
 # finding my ip address
 alias ip_addr "ifconfig en0 inet | grep inet"
+
+#setting vim to start nvim
 alias vim /usr/local/bin/nvim
 
-eval (python3.5 -m virtualfish auto_activation) 
+eval (python3 -m virtualfish auto_activation) 
 
 # clear au cache
 alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.cache"
@@ -103,14 +107,18 @@ alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.ca
 # => Utility functions
 #######################################################################
 
-# Enable ctrl + f for auto complete 
-#https://github.com/fish-shell/fish-shell/issues/3541
 function fish_user_key_bindings
     for mode in insert default visual
+        # Enable ctrl + f for auto complete 
+        # Fish issue 3541
         bind -M $mode \cf forward-char
     end
+
+    fzf_key_bindings
+
 end
 
+# sudo run last command
 function please
   if count $argv > /dev/null
     if [ $history[$argv[1]] = "please" ]
@@ -124,10 +132,10 @@ function please
 end
 
 #######################################################################
-# => Fzf functions 
+# => Fzf 
 #######################################################################
 
-#set -x FZF_DEFAULT_COMMAND 'rg --files 2> /dev/null'
+set -x FZF_DEFAULT_COMMAND 'rg --files 2> /dev/null'
 set -x FZF_CTRL_T_OPTS '--height=70% --preview="cat {} 2> /dev/null" --preview-window=right:60%:wrap'
 
 function fcd
