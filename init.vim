@@ -49,20 +49,11 @@ Plugin 'roxma/nvim-yarp'   " c++ autocomplete
 Plugin 'ncm2/ncm2-pyclang' " python autocomplete
 Plugin 'ncm2/ncm2-jedi'  " python autocomplete
 Plugin 'craigemery/vim-autotag' " auto ctagging
-"Plugin 'sbdchd/neoformat' " code styling
-
-
+Plugin 'vim-airline/vim-airline'
+Plugin 'ayu-theme/ayu-vim'
+Bundle 'edkolev/tmuxline.vim'
 " End configuration, makes the plugins available
 call vundle#end()
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => nvim completion manager
-"let g:neoformat_cpp_astyle = {
-"            \ 'exe': 'astyle',
-"            \ 'args': ['--project']
-"            \ }
-
-let g:neoformat_verbose = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -87,8 +78,17 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Airline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let g:airline#extensions#tmuxline#enabled = 0
+
+let g:airline#extensions#tabline#enabled = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Ale
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " NOTE: ALE currently doesn't work on C++ header files: https://github.com/w0rp/ale/issues/782
 let g:ale_sign_error = '✖'
 let g:ale_sign_warning = '⚠'
@@ -113,7 +113,7 @@ let g:ale_fixers = {'python': ['remove_trailing_lines', 'trim_whitespace'],
 " so the clang checker can find the compile_commands.json file
 let g:ale_c_build_dir_names = ['build']
 
-let g:ale_cpp_clangtidy_checks = ["*,-google*,-llvm-header-guard,-*special-member-functions,-readability-else-after-return,-*uppercase-literal-suffix,-modernize-return-braced-init-list,-misc-unused-parameters,-*use-equals-default,-readability-const-return-type"]
+let g:ale_cpp_clangtidy_checks = ["*,-google*,-llvm-header-guard,-*special-member-functions,-readability-else-after-return,-*uppercase-literal-suffix,-fuchsia-default-arguments,-readability-const-return-type,-misc-unused-parameters,-*-use-equals-default,-readability-redundant-control-flow,-readability-implicit-bool-conversion,-modernize-return-braced-init-list,-*-magic-numbers,-clang-diagnostic-error,-cert-err58-cpp,-fuchsia-statically-constructed-objects,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-hicpp-no-array-decay"]
 
 let g:ale_cpp_clang_options = '-Wall -Wpedantic'
 
@@ -127,14 +127,14 @@ let g:ale_c_parse_compile_commands=1
 let g:ale_c_parse_makefile=1
 
 " Fix on save
-let g:ale_fix_on_save = 1
+let g:ale_fix_on_save = 0
 
 " use C-k/C-j to jump from error to error
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 " Map Ctrl-C to Escape, mainly to trigger autocmd for ALE when exiting insert mode
-"inoremap <C-c> <Esc>
+inoremap <C-c> <Esc>
 "let g:ale_lint_on_insert_leave = 1  " run lint when leaving insert mode(good when ale_lint_on_text_changed is 'normal')
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -143,10 +143,15 @@ nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 " disable search of certain folders
 let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/](contrib|build|build_OSX|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
+    \ 'dir': '\v[\/](contrib|build*|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
     \ 'file': '\v\.(so|swp|zip|gz|tar|png|jpg|pyc)$'
     \ }
 let g:ctrlp_cmd = 'CtrlP'
+
+" Don't use git as the hierarchy, just do the current directory and lower
+let g:ctrlp_working_path_mode = 'wa'
+
+"let g:ctrlp_user_command = 'rg --files %s'
 
 nnoremap <leader>. :CtrlPTag<cr>
 
@@ -156,10 +161,19 @@ nnoremap <leader>. :CtrlPTag<cr>
 " Enable syntax highlighting
 syntax enable
 
-try
-    colorscheme desert
-catch
-endtry
+"try
+"    colorscheme desert
+"catch
+"endtry
+
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
+
+let ayucolor="dark"   " for dark version of theme
+colorscheme ayu
 
 set background=dark
 
@@ -170,9 +184,8 @@ set encoding=utf8
 set ffs=unix
 
 " highlight colors
-hi Search ctermbg=grey
-hi Search ctermfg=black
-
+"hi Search ctermbg=grey
+"hi Search ctermfg=black
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
@@ -264,6 +277,10 @@ set novisualbell
 set t_vb=
 set tm=500
 
+" highlight all replacements as they go, and preview in a split
+if has('nvim')
+    set inccommand=split
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -287,8 +304,9 @@ set shiftwidth=4
 set tabstop=4
 
 " Linebreak on 500 characters
-set lbr
-set tw=500
+" TODO: Maybe remove?
+"set lbr
+"set tw=10
 
 set ai "Auto indent
 set wrap "Wrap lines
@@ -318,6 +336,21 @@ set viminfo^=%
 " Splits
 map <leader>v :vs<cr>
 
+" Enable per project nvimrc
+" TODO Remove?
+"set exrc
+"set secure
+
+""""""""""""""""""""""""""""""
+" => Debugging
+""""""""""""""""""""""""""""""
+
+" leader + insert python breakpoint
+map <leader>pyd oimport pdb<ENTER>pdb.set_trace()<ESC>
+
+" insert cjappl TODO
+map <leader>c o//TODO: CJAPPL<ESC>
+
 """"""""""""""""""""""""""""""
 " => p4 mappings
 """"""""""""""""""""""""""""""
@@ -330,8 +363,7 @@ map <silent> <leader>r :!p4 revert %<cr>
 " Always show the status line
 set laststatus=2
 
-" Format the status line
-set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
+"set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Deleting whitespace
@@ -372,9 +404,8 @@ map <leader>Y "*e
 map <leader>p "*p
 map <leader>P "*P
 
-set clipboard=unnamed
-
-map <leader>d oimport pdb<ENTER>pdb.set_trace()<ESC>
+" Use system clipboard automatically
+"set clipboard=unnamed
 
 " set colon to semicolon
 nnoremap ; :
@@ -390,15 +421,12 @@ function! HasPaste()
     return ''
 endfunction
 
-" Enable per project nvimrc
-set exrc
-set secure
 
 function! HeaderSwitch()
     let l:extension = expand("%:e")
 
     if match(l:extension, "cpp") < 0 && match(l:extension, "h") < 0 && match(l:extension, "c") < 0
-        echo "blah"
+        echo "No matching header or cpp found"
         return
     endif
 
@@ -413,7 +441,7 @@ function! HeaderSwitch()
   else
     let l:directory_name = fnamemodify(expand("%:p"), ":h")
     " At this point cmd might evaluate to something of the format:
-    let l:cmd="find " . l:directory_name . " . -type f -iregex \""  . l:next_file . "\" -print -quit"
+    let l:cmd="find \"" . l:directory_name . "\" . -type f -iregex \""  . l:next_file . "\" -print -quit"
 
     " The substitute gets rid of the new line at the end of the result. The
     " function `filereadable` does not like the newline that `find` puts at

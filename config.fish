@@ -36,7 +36,7 @@
 # PATHS (cd)
 set PERSONAL ~/Documents/Code/personal
 set WORK_TRIALS ~/Documents/Code/work_trials
-set OS_CLASS ~/Documents/Code/operating_systems
+set OS_CLASS ~/Documents/Code/operating_systems/csci-e-92-cjappl/KDS\ First\ Workspace/CJAPPL-OS/Sources/modules/cjappl_os
 set DOTFILES ~/dotfiles
 
 set MUSE_MAIN ~/Documents/Code/museqa/devel/
@@ -68,8 +68,8 @@ function rgcpp -a pattern dir
     rg $pattern --type cpp -H $dir 
 end
 
-function reuropa -a pattern 
-    rg $pattern -g "!contrib/*" -g "!build*/*" -g "!MacOSX" -g "!tags" -g "!*.html" -g "!*.js" 
+function rh -a pattern 
+    rg $pattern -g "!contrib/*" -g "!build*/*" -g "!MacOSX" -g "!tags" -g "!*.html" -g "!*.js" --smart-case --pretty --line-number
 end
 
 function coverage_run -a src_dir test_dir
@@ -90,7 +90,8 @@ alias .4 "cd ../../../.."
 alias .5 "cd ../../../../.." 
 alias .6 "cd ../../../../../.." 
 
-alias makebuildtest "cmake .. && cmake --build . && ctest . -C Debug -VV"
+alias makebuildtestrelease "cmake .. -DCMAKE_BUILD_TYPE=Release && cmake --build . && ctest . -C Debug -VV"
+alias makebuildtestdebug "cmake .. -DCMAKE_BUILD_TYPE=Debug && cmake --build . && ctest . -C Debug -VV"
 
 # finding my ip address
 alias ip_addr "ifconfig en0 inet | grep inet"
@@ -134,6 +135,8 @@ end
 #######################################################################
 # => Fzf 
 #######################################################################
+
+source $PERSONAL/cjappl_forgit/forgit/forgit.plugin.fish
 
 set -x FZF_DEFAULT_COMMAND 'rg --files 2> /dev/null'
 set -x FZF_CTRL_T_OPTS '--height=70% --preview="cat {} 2> /dev/null" --preview-window=right:60%:wrap'
