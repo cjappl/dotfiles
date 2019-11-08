@@ -36,7 +36,7 @@
 # PATHS (cd)
 set PERSONAL ~/Documents/Code/personal
 set WORK_TRIALS ~/Documents/Code/work_trials
-set OS_CLASS ~/Documents/Code/operating_systems/csci-e-92-cjappl/KDS\ First\ Workspace/CJAPPL-OS/Sources/modules/cjappl_os
+set OS_CLASS /Users/cjappl/Documents/Code/operating_systems/csci-e-92-cjappl/cjappl_workspace/CJAPPL_OS_2/Sources
 set DOTFILES ~/dotfiles
 
 set MUSE_MAIN ~/Documents/Code/museqa/devel/
@@ -174,4 +174,35 @@ function fkill --description "Kill processes"
     end
     fkill
   end
+end
+
+
+set -x fish_color_user d7ff87
+set -x fish_color_cwd ff6b2d
+#set -x fish_color_host 2f99d4
+set -x fish_color_host 2f99d4
+set -x fish_color_operator $fish_color_user 
+
+# More prompt configuration 
+function fish_mode_prompt
+  switch $fish_bind_mode
+    case default
+      set_color --bold $fish_color_cwd 
+      echo '[N]'
+    case insert
+      set_color --bold $fish_color_host 
+      echo '[I]'
+    case replace_one
+      set_color --bold green
+      echo '[R]'
+    case visual
+      set_color --bold brmagenta
+      echo '[V]'
+    case '*'
+      set_color --bold red
+      echo '[?]'
+  end
+  set_color white 
+  echo '|'
+  set_color normal
 end

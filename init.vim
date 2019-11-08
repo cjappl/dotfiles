@@ -90,9 +90,9 @@ let g:airline#extensions#tabline#enabled = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " NOTE: ALE currently doesn't work on C++ header files: https://github.com/w0rp/ale/issues/782
-let g:ale_sign_error = '✖'
-let g:ale_sign_warning = '⚠'
-let g:ale_statusline_format =[' %d E ', ' %d W ', '']
+"let g:ale_sign_error = '✖'
+"let g:ale_sign_warning = '⚠'
+"let g:ale_statusline_format =[' %d E ', ' %d W ', '']
 let g:ale_lint_on_text_changed = 'never'  " run lint in normal mode only
 " suggested linters:
 "     pip-install: cmakelint, flake8, autopep8, rstcheck, pydocstyle
@@ -143,7 +143,7 @@ inoremap <C-c> <Esc>
 
 " disable search of certain folders
 let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/](contrib|build*|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
+    \ 'dir': '\v[\/](contrib|build|build_release|build_OSX|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
     \ 'file': '\v\.(so|swp|zip|gz|tar|png|jpg|pyc)$'
     \ }
 let g:ctrlp_cmd = 'CtrlP'
@@ -219,7 +219,6 @@ nnoremap <Leader>s :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 
 " Disabling auto commenting
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
