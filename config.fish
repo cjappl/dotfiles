@@ -57,6 +57,9 @@ set -x P4DIFF 'nvim -d'
 set -x EDITOR 'nvim'
 set -x P4MERGE '/Applications/p4merge.app/Contents/MacOS/p4merge'
 
+
+set -x RIPGREP_CONFIG_PATH '/Users/cjappl/.ripgreprc'
+
 #######################################################################
 # => Aliases and functions
 #######################################################################
@@ -70,7 +73,7 @@ function rgcpp -a pattern dir
 end
 
 function rh -a pattern 
-    rg $pattern -g "!contrib/*" -g "!build*/*" -g "!MacOSX" -g "!tags" -g "!*.html" -g "!*.js" --smart-case --pretty --line-number
+    rg $pattern -g "!qa/*" -g "!Darwin/*" -g "!contrib/*" -g "!build*/*" -g "!MacOSX" -g "!tags" -g "!*.html" -g "!*.js" --smart-case --pretty --line-number
 end
 
 function coverage_run -a src_dir test_dir
@@ -82,7 +85,10 @@ function find_and_replace -a oldtext newtext dir
     if set -q $dir 
         set dir "."
     end
+    set OLD_RIPGREP_CONFIG_PATH $RIPGREP_CONFIG_PATH 
+    set -e RIPGREP_CONFIG_PATH 
     rg -l "$oldtext" -0 $dir | xargs -p -0 sed -i '' -e "s/$oldtext/$newtext/g"
+    set -x RIPGREP_CONFIG_PATH $OLD_RIPGREP_CONFIG_PATH
 end
 
 alias .2 "cd ../.." 
@@ -91,7 +97,7 @@ alias .4 "cd ../../../.."
 alias .5 "cd ../../../../.." 
 alias .6 "cd ../../../../../.." 
 
-alias makebuildtestrelease "cmake .. -DCMAKE_BUILD_TYPE=Release && cmake --build . && ctest . -C Debug -VV"
+alias makebuildtestrelease "cmake .. -DCMAKE_BUILD_TYPE=Release && cmake --build . && ctest . -C Release -VV"
 alias makebuildtestdebug "cmake .. -DCMAKE_BUILD_TYPE=Debug && cmake --build . && ctest . -C Debug -VV"
 
 # finding my ip address
@@ -100,7 +106,7 @@ alias ip_addr "ifconfig en0 inet | grep inet"
 #setting vim to start nvim
 alias vim /usr/local/bin/nvim
 
-eval (python3 -m virtualfish auto_activation) 
+eval (python3 -m virtualfish) 
 
 # clear au cache
 alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.cache"
@@ -140,7 +146,7 @@ end
 source $PERSONAL/cjappl_forgit/forgit/forgit.plugin.fish
 
 set -x FZF_DEFAULT_COMMAND 'rg --files 2> /dev/null'
-set -x FZF_CTRL_T_OPTS '--height=70% --preview="cat {} 2> /dev/null" --preview-window=right:60%:wrap'
+set -x FZF_CTRL_T_OPTS '--preview="cat {} 2> /dev/null" --preview-window=right:60%:wrap'
 
 function fcd
     if set -q argv[1]
@@ -207,3 +213,36 @@ function fish_mode_prompt
   echo '|'
   set_color normal
 end
+set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
+
+
+function remove_europa_plugins
+    set -l _plugin_paths "/Users/cjappl/Library/Audio/Plug-Ins/Components/Dolby"* "/Library/Audio/Plug-Ins/Components/Dolby"* "/Users/cjappl/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Application Support/Avid/Audio/Plug-Ins/Dolby"* "/Users/cjappl/Music/Ableton/User Library/Templates/"* "/Users/cjappl/Library/Preferences/Nuendo 10/Project Templates/Dolby Atmos Music/"* "/Users/cjappl/Library/Preferences/Cubase 10/Project Templates/Dolby Atmos Music/"* "/Users/cjappl/Documents/Pro Tools/Session Templates/Dolby Atmos Music/"* "/Users/cjappl/Music/Audio Music Apps/Project Templates/"* "/Users/cjappl/Documents/Pro Tools/IO Settings/"*
+
+    if test -z "$_plugin_paths"
+        echo "Nothing installed"
+        return
+    end
+    
+    for path in $_plugin_paths
+        if test -e $path
+            echo "REMOVING " $path
+            sudo rm -rf $path 
+        else
+            echo "NOT FOUND " $path 
+        end
+    end
+end
+
+function list_europa_plugins
+    set -l _plugin_paths "/Users/cjappl/Library/Audio/Plug-Ins/Components/Dolby"* "/Library/Audio/Plug-Ins/Components/Dolby"* "/Users/cjappl/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Application Support/Avid/Audio/Plug-Ins/Dolby"* "/Users/cjappl/Music/Ableton/User Library/Templates/"* "/Users/cjappl/Library/Preferences/Nuendo 10/Project Templates/Dolby Atmos Music/"* "/Users/cjappl/Library/Preferences/Cubase 10/Project Templates/Dolby Atmos Music/"* "/Users/cjappl/Documents/Pro Tools/Session Templates/Dolby Atmos Music/"* "/Users/cjappl/Music/Audio Music Apps/Project Templates/"* "/Users/cjappl/Documents/Pro Tools/IO Settings/"*
+
+    for path in $_plugin_paths
+        echo $path 
+    end
+end
+
+# settings library and include paths to look in the usr/local dir
+# necessary for pyliblo https://github.com/dsacre/pyliblo/issues/3
+set -gx C_INCLUDE_PATH /usr/local/include $C_INCLUDE_PATH
+set -gx LIBRARY_PATH /usr/local/lib $LIBRARY_PATH

@@ -11,9 +11,17 @@
 # Be pretty
 --pretty
 
--g "!tags" 
--g "!*.html" 
--g "!*.js" 
--g "!*.tox" 
--g "!*__pycache__" 
+-g 
+!*tags 
 
+-g 
+!*.html 
+
+-g 
+!*.js 
+
+-g 
+!*.tox 
+
+-g 
+!*__pycache__ 
