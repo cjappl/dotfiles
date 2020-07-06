@@ -46,8 +46,9 @@ Plugin 'jremmen/vim-ripgrep' " recursive grep
 Plugin 'pboettch/vim-cmake-syntax'  " syntax highlighting for cmake
 Plugin 'ncm2/ncm2'      " autocomplete engine
 Plugin 'roxma/nvim-yarp'   " c++ autocomplete
-Plugin 'ncm2/ncm2-pyclang' " python autocomplete
+Plugin 'ncm2/ncm2-pyclang' " python and c++ autocomplete
 Plugin 'ncm2/ncm2-jedi'  " python autocomplete
+Plugin 'ncm2/ncm2-path'  " path completion
 Plugin 'craigemery/vim-autotag' " auto ctagging
 Plugin 'vim-airline/vim-airline'
 Plugin 'ayu-theme/ayu-vim'
@@ -67,7 +68,8 @@ let g:ncm2_pyclang#library_path = '/Applications/Xcode.app/Contents/Developer/To
 
 let g:ncm2_pyclang#database_path = [
             \ 'compile_commands.json',
-            \ 'build/compile_commands.json'
+            \ 'build/compile_commands.json',
+            \ 'AtmosBusDynamics/build/compile_commands.json'
             \ ]
 
 " When the <Enter> key is pressed while the popup menu is visible, it only
@@ -144,7 +146,7 @@ inoremap <C-c> <Esc>
 " disable search of certain folders
 let g:ctrlp_custom_ignore = {
     \ 'dir': '\v[\/](contrib|build|build_release|build_OSX|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
-    \ 'file': '\v\.(so|swp|zip|gz|tar|png|jpg|pyc)$'
+    \ 'file': '\v\.(lst|so|swp|zip|gz|tar|png|jpg|pyc)$'
     \ }
 let g:ctrlp_cmd = 'CtrlP'
 
@@ -190,6 +192,16 @@ set ffs=unix
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" file browsing with netrw
+let g:netrw_banner=0  " disable banner
+let g:netrw_browse_split=4 " open in prior window
+let g:netrw_altv=1 "open splits to the right with v
+let g:netrw_liststyle=3 "tree
+
+
+" allow for recursive file searching
+set path+=**
+
 " Set line numbers
 set number
 
@@ -213,6 +225,9 @@ let mapleader=" "
 
 " Fast saving
 nmap <leader>w :w!<cr>
+
+" Fast search
+nmap <leader>r :Rg
 
 " start typing a search/replace command using current word
 nnoremap <Leader>s :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
@@ -280,6 +295,12 @@ set tm=500
 if has('nvim')
     set inccommand=split
 endif
+
+" Auto jump to last spot exited in the current file
+autocmd BufReadPost *
+      \  if line("'\"") > 1 && line("'\"") <= line("$")
+      \|   exe 'normal! g`"zvzz'
+      \| endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -349,12 +370,6 @@ map <leader>pyd oimport pdb<ENTER>pdb.set_trace()<ESC>
 
 " insert cjappl TODO
 map <leader>c o//TODO: CJAPPL<ESC>
-
-""""""""""""""""""""""""""""""
-" => p4 mappings
-""""""""""""""""""""""""""""""
-map <silent> <leader>e :!p4 edit %<cr>
-map <silent> <leader>r :!p4 revert %<cr>
 
 """"""""""""""""""""""""""""""
 " => Status line

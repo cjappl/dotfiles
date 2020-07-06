@@ -43,7 +43,7 @@ set DOTFILES ~/dotfiles
 set MUSE_MAIN ~/Documents/Code/museqa/devel/
 
 set EUROPA ~/Documents/Code/cjappl_europa_main/
-set EUROPA_PANNER_01 ~/Documents/Code/cjappl_europa_panner_01
+set BUS ~/Documents/Code/atmos-bus-dynamics/
 
 set AU ~/Library/Audio/Plug-Ins/Components
 set VST ~/Library/Audio/Plug-Ins/VST3
@@ -64,17 +64,23 @@ set -x RIPGREP_CONFIG_PATH '/Users/cjappl/.ripgreprc'
 # => Aliases and functions
 #######################################################################
 
-function rgpy -a pattern dir
-    rg $pattern --type py -H $dir 
-end
-
-function rgcpp -a pattern dir
-    rg $pattern --type cpp -H $dir 
-end
 
 function rh -a pattern 
-    rg $pattern -g "!qa/*" -g "!Darwin/*" -g "!contrib/*" -g "!build*/*" -g "!MacOSX" -g "!tags" -g "!*.html" -g "!*.js" --smart-case --pretty --line-number
+    rg $pattern -g "!qa/*" -g "!Darwin/*" -g "!contrib/*" -g "!build*/*" -g "!MacOSX" -g "!*.html" -g "!*.js" 
 end
+
+function rgcmake
+    rg --type cmake $argv
+end
+
+function rgcpp
+    rg --type cpp $argv
+end
+
+function rgpy 
+    rg --type py $argv 
+end
+
 
 function coverage_run -a src_dir test_dir
     coverage run --source $src_dir -m py.test $test_dir -v
@@ -97,8 +103,17 @@ alias .4 "cd ../../../.."
 alias .5 "cd ../../../../.." 
 alias .6 "cd ../../../../../.." 
 
-alias makebuildtestrelease "cmake .. -DCMAKE_BUILD_TYPE=Release && cmake --build . && ctest . -C Release -VV"
-alias makebuildtestdebug "cmake .. -DCMAKE_BUILD_TYPE=Debug && cmake --build . && ctest . -C Debug -VV"
+set EUROPA_GENERATOR = "Xcode"
+set EUROPA_BUILD_CMD = 
+
+function makeBuildTestEuropa -a cfg
+    cmake .. -G Xcode -DCMAKE_BUILD_TYPE=$cfg -DRUN_AUVAL_OVER_HTTP=ON &&
+    cmake --build . --config $cfg &&
+    ctest . -C $cfg -VV
+end
+
+alias makebuildtestrelease "makeBuildTestEuropa Release"
+alias makebuildtestdebug "makeBuildTestEuropa Debug"
 
 # finding my ip address
 alias ip_addr "ifconfig en0 inet | grep inet"
@@ -246,3 +261,7 @@ end
 # necessary for pyliblo https://github.com/dsacre/pyliblo/issues/3
 set -gx C_INCLUDE_PATH /usr/local/include $C_INCLUDE_PATH
 set -gx LIBRARY_PATH /usr/local/lib $LIBRARY_PATH
+
+set PATH /Users/cjappl/.gem/ruby/2.7.0/bin $PATH
+
+alias cat bat
