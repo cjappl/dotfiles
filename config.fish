@@ -103,14 +103,15 @@ alias .4 "cd ../../../.."
 alias .5 "cd ../../../../.." 
 alias .6 "cd ../../../../../.." 
 
-set EUROPA_GENERATOR = "Xcode"
-set EUROPA_BUILD_CMD = 
+set -x EUROPA_GENERATOR "Xcode"
 
 function makeBuildTestEuropa -a cfg
-    cmake .. -G Xcode -DCMAKE_BUILD_TYPE=$cfg -DRUN_AUVAL_OVER_HTTP=ON &&
+    cmake .. -G $EUROPA_GENERATOR -DCMAKE_BUILD_TYPE=$cfg -DRUN_AUVAL_OVER_HTTP=ON &&
     cmake --build . --config $cfg &&
-    ctest . -C $cfg -VV
+    ctest . -C $cfg -j 4
 end
+
+set -x CTEST_PARALLEL_LEVEL 4
 
 alias makebuildtestrelease "makeBuildTestEuropa Release"
 alias makebuildtestdebug "makeBuildTestEuropa Debug"
@@ -125,6 +126,10 @@ eval (python3 -m virtualfish)
 
 # clear au cache
 alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.cache"
+
+alias cat bat
+
+alias tabonly "tmux kill-window -a"
 
 #######################################################################
 # => Utility functions
@@ -262,6 +267,5 @@ end
 set -gx C_INCLUDE_PATH /usr/local/include $C_INCLUDE_PATH
 set -gx LIBRARY_PATH /usr/local/lib $LIBRARY_PATH
 
-set PATH /Users/cjappl/.gem/ruby/2.7.0/bin $PATH
+#set PATH /Users/cjappl/.gem/ruby/2.7.0/bin $PATH
 
-alias cat bat

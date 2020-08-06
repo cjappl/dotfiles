@@ -39,7 +39,7 @@ call vundle#begin()
 
 " Plugins
 Plugin 'VundleVim/Vundle.vim' " Bundler
-Plugin 'w0rp/ale' " auto syntax checking
+Plugin 'dense-analysis/ale' " auto syntax checking
 Plugin 'ctrlpvim/ctrlp.vim' " fuzzy search file finding
 Plugin 'roxma/python-support.nvim'  " requirement for some other packages
 Plugin 'jremmen/vim-ripgrep' " recursive grep
@@ -92,9 +92,9 @@ let g:airline#extensions#tabline#enabled = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " NOTE: ALE currently doesn't work on C++ header files: https://github.com/w0rp/ale/issues/782
-"let g:ale_sign_error = '✖'
-"let g:ale_sign_warning = '⚠'
-"let g:ale_statusline_format =[' %d E ', ' %d W ', '']
+let g:ale_sign_error = '✖'
+let g:ale_sign_warning = '⚠'
+let g:ale_statusline_format =[' %d E ', ' %d W ', '']
 let g:ale_lint_on_text_changed = 'never'  " run lint in normal mode only
 " suggested linters:
 "     pip-install: cmakelint, flake8, autopep8, rstcheck, pydocstyle
@@ -105,11 +105,13 @@ let g:ale_virtualenv_dir_names = [
             \ $HOME.'/.local/share/nvim/plugged/python-support.nvim/autoload/nvim_py3'
             \ ]
 let g:ale_python_flake8_options = '--ignore=E501'
+
 let g:ale_fixers = {'python': ['remove_trailing_lines', 'trim_whitespace'],
             \ 'json': ['prettier'],
             \ 'javascript': ['prettier'],
             \ 'css': ['prettier'],
-            \ 'cpp': ['remove_trailing_lines']
+            \ 'cpp': ['remove_trailing_lines', 'astyle'],
+            \ 'cmake': ['remove_trailing_lines']
             \ }
 
 " so the clang checker can find the compile_commands.json file
@@ -129,7 +131,7 @@ let g:ale_c_parse_compile_commands=1
 let g:ale_c_parse_makefile=1
 
 " Fix on save
-let g:ale_fix_on_save = 0
+let g:ale_fix_on_save = 1
 
 " use C-k/C-j to jump from error to error
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
@@ -138,7 +140,6 @@ nmap <silent> <C-j> <Plug>(ale_next_wrap)
 " Map Ctrl-C to Escape, mainly to trigger autocmd for ALE when exiting insert mode
 inoremap <C-c> <Esc>
 "let g:ale_lint_on_insert_leave = 1  " run lint when leaving insert mode(good when ale_lint_on_text_changed is 'normal')
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => ctrlp
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
