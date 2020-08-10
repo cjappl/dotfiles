@@ -1,0 +1,28 @@
+[user]
+	name = Christopher Apple
+	email = christopher.j.apple@gmail.com
+[core]
+	excludesfile = /Users/cjappl/.gitignore_global
+	autocrlf = false
+	safecrlf = true
+	editor = nvim
+    pager = diff-so-fancy | less --tabs 4 -RFX
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[difftool]
+    cmd = nvim -d $LOCAL $REMOTE
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[merge]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+[alias]
+    hist = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    stash-all = stash save --include-untracked
+[commit]
+	template = /Users/cjappl/.stCommitMsg
+[credential]
+	helper = osxkeychain
+[push]
+	default = current
