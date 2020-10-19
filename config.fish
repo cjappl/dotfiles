@@ -105,16 +105,13 @@ alias .6 "cd ../../../../../.."
 
 set -x EUROPA_GENERATOR "Xcode"
 
-function makeBuildTestEuropa -a cfg
-    cmake .. -G $EUROPA_GENERATOR -DCMAKE_BUILD_TYPE=$cfg -DRUN_AUVAL_OVER_HTTP=ON &&
-    cmake --build . --config $cfg &&
-    ctest . -C $cfg -j 4
+function makeBuildTestEuropa -a generator config
+    cmake .. -G $generator -DCMAKE_BUILD_TYPE=$config -DRUN_AUVAL_OVER_HTTP=ON &&
+    cmake --build . --config $config &&
+    ctest . -C $config -j 4
 end
 
 set -x CTEST_PARALLEL_LEVEL 4
-
-alias makebuildtestrelease "makeBuildTestEuropa Release"
-alias makebuildtestdebug "makeBuildTestEuropa Debug"
 
 # finding my ip address
 alias ip_addr "ifconfig en0 inet | grep inet"
@@ -203,6 +200,11 @@ function fkill --description "Kill processes"
   end
 end
 
+set FORGIT_FZF_DEFAULT_OPTS "$FORGIT_FZF_DEFAULT_OPTS --layout=reverse-list"
+
+#######################################################################
+# => colors 
+#######################################################################
 
 set -x fish_color_user d7ff87
 set -x fish_color_cwd ff6b2d
