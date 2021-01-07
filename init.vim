@@ -87,6 +87,21 @@ let g:airline#extensions#tmuxline#enabled = 0
 
 let g:airline#extensions#tabline#enabled = 1
 
+let g:airline_powerline_fonts = 1
+
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.space = "\ua0"
+
+
+"let g:tmuxline_separators = {
+"    \ 'left' : '',
+"    \ 'left_alt': '>',
+"    \ 'right' : '',
+"    \ 'right_alt' : '<',
+"    \ 'space' : ' '}
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Ale
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -115,9 +130,9 @@ let g:ale_fixers = {'python': ['remove_trailing_lines', 'trim_whitespace'],
             \ }
 
 " so the clang checker can find the compile_commands.json file
-let g:ale_c_build_dir_names = ['build']
+let g:ale_c_build_dir_names = ['build_osx']
 
-let g:ale_cpp_clangtidy_checks = ["*,-google*,-llvm-header-guard,-*special-member-functions,-readability-else-after-return,-*uppercase-literal-suffix,-fuchsia-default-arguments,-readability-const-return-type,-misc-unused-parameters,-*-use-equals-default,-readability-redundant-control-flow,-readability-implicit-bool-conversion,-modernize-return-braced-init-list,-*-magic-numbers,-clang-diagnostic-error,-cert-err58-cpp,-fuchsia-statically-constructed-objects,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-hicpp-no-array-decay"]
+let g:ale_cpp_clangtidy_checks = ["*,-llvmlibc-*,-google*,-llvm-header-guard,-*special-member-functions,-readability-else-after-return,-*uppercase-literal-suffix,-fuchsia-default-arguments,-readability-const-return-type,-misc-unused-parameters,-*-use-equals-default,-readability-redundant-control-flow,-readability-implicit-bool-conversion,-modernize-return-braced-init-list,-*-magic-numbers,-clang-diagnostic-error,-cert-err58-cpp,-fuchsia-statically-constructed-objects,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-hicpp-no-array-decay,-modernize-use-trailing-return-type,-fuchsia-default-arguments-calls"]
 
 let g:ale_cpp_clang_options = '-Wall -Wpedantic'
 
@@ -198,7 +213,6 @@ let g:netrw_banner=0  " disable banner
 let g:netrw_browse_split=4 " open in prior window
 let g:netrw_altv=1 "open splits to the right with v
 let g:netrw_liststyle=3 "tree
-
 
 " allow for recursive file searching
 set path+=**
@@ -456,7 +470,7 @@ function! HeaderSwitch()
   else
     let l:directory_name = fnamemodify(expand("%:p"), ":h")
     " At this point cmd might evaluate to something of the format:
-    let l:cmd="find \"" . l:directory_name . "\" . -type f -iregex \""  . l:next_file . "\" -print -quit"
+    let l:cmd="find \"" . l:directory_name . "\" . -path ./contrib -prune -false -o -type f -iregex \""  . l:next_file . "\" -print -quit"
 
     " The substitute gets rid of the new line at the end of the result. The
     " function `filereadable` does not like the newline that `find` puts at

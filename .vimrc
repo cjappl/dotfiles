@@ -45,6 +45,7 @@ Plugin 'VundleVim/Vundle.vim' " Bundler
 Plugin 'Valloric/YouCompleteMe' " Auto completion
 Plugin 'scrooloose/syntastic' " auto syntax checking
 Plugin 'ctrlpvim/ctrlp.vim' " fuzzy search file finding
+Plugin 'vim-airline/vim-airline.vim' " fuzzy search file finding
 
 " End configuration, makes the plugins available
 call vundle#end()

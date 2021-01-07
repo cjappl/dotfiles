@@ -35,14 +35,12 @@
 # remote logins (ssh)
 
 # PATHS (cd)
-set PERSONAL ~/Documents/Code/personal
-set WORK_TRIALS ~/Documents/Code/work_trials
-set OS_CLASS /Users/cjappl/Documents/Code/operating_systems/csci-e-92-cjappl/cjappl_workspace/CJAPPL_OS_2/Sources
+set PERSONAL ~/Code/personal
+set WORK_TRIALS ~/Code/work
 set DOTFILES ~/dotfiles
 
-set MUSE_MAIN ~/Documents/Code/museqa/devel/
-
 set EUROPA ~/Documents/Code/cjappl_europa_main/
+set PERFORCE ~/Perforce
 set BUS ~/Documents/Code/atmos-bus-dynamics/
 
 set AU ~/Library/Audio/Plug-Ins/Components
@@ -52,7 +50,7 @@ set AAX "/Library/Application Support/Avid/Audio/Plug-Ins/"
 # P4 
 set -x P4USER 'cjappl'
 set -x P4PORT 'perforce:1666'
-set -x P4CLIENT 'cjappl_europa_main'
+set -x P4CLIENT 'cjappl_europa_dabs_1_0_new'
 set -x P4DIFF 'nvim -d'
 set -x EDITOR 'nvim'
 set -x P4MERGE '/Applications/p4merge.app/Contents/MacOS/p4merge'
@@ -106,9 +104,11 @@ alias .6 "cd ../../../../../.."
 set -x EUROPA_GENERATOR "Xcode"
 
 function makeBuildTestEuropa -a generator config
-    cmake .. -G $generator -DCMAKE_BUILD_TYPE=$config -DRUN_AUVAL_OVER_HTTP=ON &&
+    cmake .. -G $generator -DCMAKE_BUILD_TYPE=$config -DRUN_AUVAL_OVER_HTTP=ON -Wdev -Werror=dev -Werror=deprecated &&
     cmake --build . --config $config &&
     ctest . -C $config -j 4
+
+    tput bel
 end
 
 set -x CTEST_PARALLEL_LEVEL 4
@@ -119,7 +119,7 @@ alias ip_addr "ifconfig en0 inet | grep inet"
 #setting vim to start nvim
 alias vim /usr/local/bin/nvim
 
-eval (python3 -m virtualfish) 
+#eval (python3 -m virtualfish) 
 
 # clear au cache
 alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.cache"
@@ -160,7 +160,7 @@ end
 # => Fzf 
 #######################################################################
 
-source $PERSONAL/cjappl_forgit/forgit/forgit.plugin.fish
+source $PERSONAL/forgit/forgit.plugin.fish
 
 set -x FZF_DEFAULT_COMMAND 'rg --files 2> /dev/null'
 set -x FZF_CTRL_T_OPTS '--preview="cat {} 2> /dev/null" --preview-window=right:60%:wrap'
@@ -271,3 +271,4 @@ set -gx LIBRARY_PATH /usr/local/lib $LIBRARY_PATH
 
 #set PATH /Users/cjappl/.gem/ruby/2.7.0/bin $PATH
 
+set fish_greeting ""
