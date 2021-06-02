@@ -4,7 +4,7 @@
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 # Install useful packages
-brew install fish python nvim tmux fzf ripgrep git ctags bat
+brew install fish python nvim tmux fzf ripgrep git ctags bat fastmod
 
 brew install --cask firefox
 brew install --cask iterm2
@@ -26,14 +26,15 @@ ln ~/dotfiles/.xvimrc ~/ > /dev/null
 
 pip3 install pynvim virtualfish pdbpp ipython flake8
 
+# Install vundle and all git plugins
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+nvim +PluginInstall +qall
+nvim +PythonSupportInitPython3 +qall
 
 git clone https://github.com/powerline/fonts ~/Downloads
 chmod +x ~/Downloads/fonts/install.sh
 bash -c "~/Downloads/fonts/install.sh"
 
-nvim +PluginInstall +qall
-nvim +PythonSupportInitPython3 +qall
 
 # Remove all icons from desktop
 defaults write com.apple.finder CreateDesktop false

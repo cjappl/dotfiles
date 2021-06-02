@@ -58,6 +58,9 @@ set -x P4MERGE '/Applications/p4merge.app/Contents/MacOS/p4merge'
 
 set -x RIPGREP_CONFIG_PATH '/Users/cjappl/.ripgreprc'
 
+#set -x SDK_ROOT (xcrun --sdk macosx --show-sdk-path) 2> /dev/null 1>&2
+#set -x SDKROOT (xcrun --sdk macosx --show-sdk-path) 2> /dev/null 1>&2
+
 #######################################################################
 # => Aliases and functions
 #######################################################################
@@ -104,9 +107,9 @@ alias .6 "cd ../../../../../.."
 set -x EUROPA_GENERATOR "Xcode"
 
 function makeBuildTestEuropa -a generator config
-    cmake .. -G $generator -DCMAKE_BUILD_TYPE=$config -DRUN_AUVAL_OVER_HTTP=ON -Wdev -Werror=dev -Werror=deprecated &&
+    cmake .. -G $generator -DCMAKE_BUILD_TYPE=$config -DRUN_AUVAL_OVER_HTTP=ON &&
     cmake --build . --config $config &&
-    ctest . -C $config -j 4
+    ctest . -C $config -j 4 --output-on-failure
 
     tput bel
 end
@@ -122,7 +125,7 @@ alias vim /usr/local/bin/nvim
 #eval (python3 -m virtualfish) 
 
 # clear au cache
-alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.cache"
+alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.cache && rm ~/Library/Preferences/com.apple.audio.InfoHelper.plist"
 
 alias cat bat
 
@@ -160,7 +163,7 @@ end
 # => Fzf 
 #######################################################################
 
-source $PERSONAL/forgit/forgit.plugin.fish
+source $PERSONAL/forgit/conf.d/forgit.plugin.fish
 
 set -x FZF_DEFAULT_COMMAND 'rg --files 2> /dev/null'
 set -x FZF_CTRL_T_OPTS '--preview="cat {} 2> /dev/null" --preview-window=right:60%:wrap'
@@ -272,3 +275,5 @@ set -gx LIBRARY_PATH /usr/local/lib $LIBRARY_PATH
 #set PATH /Users/cjappl/.gem/ruby/2.7.0/bin $PATH
 
 set fish_greeting ""
+
+fish_vi_key_bindings
