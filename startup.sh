@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # install brew
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install useful packages
 brew install fish python nvim tmux fzf ripgrep git ctags bat fastmod
@@ -11,9 +11,6 @@ brew install --cask iterm2
 
 # run install step of fzf for command purposes
 $(brew --prefix)/opt/fzf/install
-
-## clone configs to ~/dotfiles
-ls ~/dotfiles/config.fish > /dev/null
 
 echo "linking all config files" 
 mkdir -p ~/.config/nvim > /dev/null
@@ -34,7 +31,6 @@ nvim +PythonSupportInitPython3 +qall
 git clone https://github.com/powerline/fonts ~/Downloads
 chmod +x ~/Downloads/fonts/install.sh
 bash -c "~/Downloads/fonts/install.sh"
-
 
 # Remove all icons from desktop
 defaults write com.apple.finder CreateDesktop false
