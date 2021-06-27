@@ -33,7 +33,7 @@ git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 nvim +PluginInstall +qall
 nvim +PythonSupportInitPython3 +qall
 
-git clone https://github.com/powerline/fonts ~/Downloads
+git clone https://github.com/powerline/fonts ~/Downloads/fonts
 chmod +x ~/Downloads/fonts/install.sh
 bash -c "~/Downloads/fonts/install.sh"
 
