@@ -28,11 +28,12 @@ ln ~/dotfiles/.xvimrc ~/.xvimrc > /dev/null
 
 pip3 install pynvim virtualfish pdbpp ipython flake8 --user
 
+# Install vundle and all git plugins
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 nvim +PluginInstall +qall
 nvim +PythonSupportInitPython3 +qall
 
-git clone https://github.com/powerline/fonts ~/Downloads/fonts
+git clone https://github.com/powerline/fonts ~/Downloads
 chmod +x ~/Downloads/fonts/install.sh
 bash -c "~/Downloads/fonts/install.sh"
 

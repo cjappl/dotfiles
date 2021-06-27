@@ -58,6 +58,9 @@ set -x P4MERGE '/Applications/p4merge.app/Contents/MacOS/p4merge'
 
 set -x RIPGREP_CONFIG_PATH '/Users/cjappl/.ripgreprc'
 
+#set -x SDK_ROOT (xcrun --sdk macosx --show-sdk-path) 2> /dev/null 1>&2
+#set -x SDKROOT (xcrun --sdk macosx --show-sdk-path) 2> /dev/null 1>&2
+
 #######################################################################
 # => Aliases and functions
 #######################################################################
@@ -86,9 +89,9 @@ function coverage_run -a src_dir test_dir
 end
 
 function makeBuildTestEuropa -a generator config
-    cmake .. -G $generator -DCMAKE_BUILD_TYPE=$config -DRUN_AUVAL_OVER_HTTP=ON -Wdev -Werror=dev -Werror=deprecated &&
+    cmake .. -G $generator -DCMAKE_BUILD_TYPE=$config -DRUN_AUVAL_OVER_HTTP=ON &&
     cmake --build . --config $config &&
-    ctest . -C $config -j 4
+    ctest . -C $config -j 4 --output-on-failure
 
     tput bel
 end
@@ -104,7 +107,7 @@ alias vim nvim
 #eval (python3 -m virtualfish) 
 
 # clear au cache
-alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.cache"
+alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.cache && rm ~/Library/Preferences/com.apple.audio.InfoHelper.plist"
 
 alias cat bat
 
@@ -252,3 +255,5 @@ set -gx C_INCLUDE_PATH /usr/local/include $C_INCLUDE_PATH
 set -gx LIBRARY_PATH /usr/local/lib $LIBRARY_PATH
 
 set fish_greeting ""
+
+fish_vi_key_bindings

@@ -57,6 +57,8 @@ Bundle 'edkolev/tmuxline.vim'
 call vundle#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set peekaboo window so it's a bit bigger
+let g:peekaboo_window = "vert bo 45new"
 
 " enable ncm2 for all buffers
 autocmd BufEnter * call ncm2#enable_for_buffer()
@@ -69,6 +71,7 @@ let g:ncm2_pyclang#library_path = '/Applications/Xcode.app/Contents/Developer/To
 let g:ncm2_pyclang#database_path = [
             \ 'compile_commands.json',
             \ 'build/compile_commands.json',
+            \ 'Darwin/compile_commands.json',
             \ 'AtmosBusDynamics/build/compile_commands.json'
             \ ]
 
@@ -121,26 +124,32 @@ let g:ale_virtualenv_dir_names = [
             \ ]
 let g:ale_python_flake8_options = '--ignore=E501'
 
-let g:ale_fixers = {'python': ['remove_trailing_lines', 'trim_whitespace'],
-            \ 'json': ['prettier'],
-            \ 'javascript': ['prettier'],
-            \ 'css': ['prettier'],
-            \ 'cpp': ['remove_trailing_lines', 'astyle'],
-            \ 'cmake': ['remove_trailing_lines']
+"'python': ['remove_trailing_lines', 'trim_whitespace'],
+let g:ale_fixers = {
+            \ 'python': [],
+            \ 'cpp': [],
+            \ 'objcpp': [],
+            \ 'cmake': []
             \ }
 
 " so the clang checker can find the compile_commands.json file
 let g:ale_c_build_dir_names = ['build_osx']
+
+let g:ale_c_clangformat_style_option = 'file'
 
 let g:ale_cpp_clangtidy_checks = ["*,-llvmlibc-*,-google*,-llvm-header-guard,-*special-member-functions,-readability-else-after-return,-*uppercase-literal-suffix,-fuchsia-default-arguments,-readability-const-return-type,-misc-unused-parameters,-*-use-equals-default,-readability-redundant-control-flow,-readability-implicit-bool-conversion,-modernize-return-braced-init-list,-*-magic-numbers,-clang-diagnostic-error,-cert-err58-cpp,-fuchsia-statically-constructed-objects,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-hicpp-no-array-decay,-modernize-use-trailing-return-type,-fuchsia-default-arguments-calls"]
 
 let g:ale_cpp_clang_options = '-Wall -Wpedantic'
 
 let g:ale_linters = {'py': ['flake8'],
+  \ 'objc': ['clang', 'clangcheck', 'clangtidy'],
+  \ 'objcpp': ['clang', 'clangcheck', 'clangtidy'],
   \ 'cpp': ['clang', 'clangcheck', 'clangtidy'],
-  \ 'h': ['clang', 'clangcheck', 'clangtidy'],
   \ 'hpp': ['clang', 'clangcheck', 'clangtidy'],
   \}
+
+let g:ale_c_clangformat_use_local_file=1
+let g:ale_c_clangformat_style_option="file"
 
 let g:ale_c_parse_compile_commands=1
 let g:ale_c_parse_makefile=1
@@ -161,17 +170,13 @@ inoremap <C-c> <Esc>
 
 " disable search of certain folders
 let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/](contrib|build|build_release|build_OSX|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
+    \ 'dir': '\v[\/](Darwin|Darwin_external|contrib|build|build_release|build_OSX|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
     \ 'file': '\v\.(lst|so|swp|zip|gz|tar|png|jpg|pyc)$'
     \ }
 let g:ctrlp_cmd = 'CtrlP'
 
 " Don't use git as the hierarchy, just do the current directory and lower
 let g:ctrlp_working_path_mode = 'wa'
-
-"let g:ctrlp_user_command = 'rg --files %s'
-
-nnoremap <leader>. :CtrlPTag<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
@@ -243,6 +248,9 @@ nmap <leader>w :w!<cr>
 
 " Fast search
 nmap <leader>r :Rg
+
+" Lazy macro repeat
+nmap <leader>m @@
 
 " start typing a search/replace command using current word
 nnoremap <Leader>s :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
@@ -478,7 +486,6 @@ function! HeaderSwitch()
     let l:result = substitute(system(l:cmd), '\n', '', '')
 
     if l:result != 0
-        echo "Shit went wrong"
         echo l:cmd
         echo l:result
     endif
@@ -502,4 +509,12 @@ augroup myvimrc
     au BufWritePost .vimrc,init.vim so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
 augroup END
 
+function! ClangFormatFunction()
+   let l:formatdiff = 1
+   echom system("clang-format -style=file -i " . expand('%:p'))
+   :e
+endfunction
+command Format   call ClangFormatFunction()
+
 let g:python3_host_prog = '/usr/bin/python3'
+
