@@ -501,3 +501,5 @@ augroup myvimrc
     au!
     au BufWritePost .vimrc,init.vim so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
 augroup END
+
+let g:python3_host_prog = '/usr/bin/python3'

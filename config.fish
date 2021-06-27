@@ -64,7 +64,7 @@ set -x RIPGREP_CONFIG_PATH '/Users/cjappl/.ripgreprc'
 
 
 function rh -a pattern 
-    rg $pattern -g "!qa/*" -g "!Darwin/*" -g "!contrib/*" -g "!build*/*" -g "!MacOSX" -g "!*.html" -g "!*.js" 
+    rg $pattern -g "!qa/*" -g "!Darwin/*" -g "!contrib/*" -g "!build*/*" -g "!MacOSX" -g "!*.html" -g "!*.js" $argv
 end
 
 function rgcmake
@@ -85,24 +85,6 @@ function coverage_run -a src_dir test_dir
     coverage report -m --fail-under=100
 end
 
-function find_and_replace -a oldtext newtext dir
-    if set -q $dir 
-        set dir "."
-    end
-    set OLD_RIPGREP_CONFIG_PATH $RIPGREP_CONFIG_PATH 
-    set -e RIPGREP_CONFIG_PATH 
-    rg -l "$oldtext" -0 $dir | xargs -p -0 sed -i '' -e "s/$oldtext/$newtext/g"
-    set -x RIPGREP_CONFIG_PATH $OLD_RIPGREP_CONFIG_PATH
-end
-
-alias .2 "cd ../.." 
-alias .3 "cd ../../.." 
-alias .4 "cd ../../../.." 
-alias .5 "cd ../../../../.." 
-alias .6 "cd ../../../../../.." 
-
-set -x EUROPA_GENERATOR "Xcode"
-
 function makeBuildTestEuropa -a generator config
     cmake .. -G $generator -DCMAKE_BUILD_TYPE=$config -DRUN_AUVAL_OVER_HTTP=ON -Wdev -Werror=dev -Werror=deprecated &&
     cmake --build . --config $config &&
@@ -117,7 +99,7 @@ set -x CTEST_PARALLEL_LEVEL 4
 alias ip_addr "ifconfig en0 inet | grep inet"
 
 #setting vim to start nvim
-alias vim /usr/local/bin/nvim
+alias vim nvim
 
 #eval (python3 -m virtualfish) 
 
@@ -160,7 +142,7 @@ end
 # => Fzf 
 #######################################################################
 
-source $PERSONAL/forgit/forgit.plugin.fish
+source $PERSONAL/forgit/conf.d/forgit.plugin.fish
 
 set -x FZF_DEFAULT_COMMAND 'rg --files 2> /dev/null'
 set -x FZF_CTRL_T_OPTS '--preview="cat {} 2> /dev/null" --preview-window=right:60%:wrap'
@@ -268,7 +250,5 @@ end
 # necessary for pyliblo https://github.com/dsacre/pyliblo/issues/3
 set -gx C_INCLUDE_PATH /usr/local/include $C_INCLUDE_PATH
 set -gx LIBRARY_PATH /usr/local/lib $LIBRARY_PATH
-
-#set PATH /Users/cjappl/.gem/ruby/2.7.0/bin $PATH
 
 set fish_greeting ""
