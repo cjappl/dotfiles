@@ -89,8 +89,13 @@ function coverage_run -a src_dir test_dir
 end
 
 function makeBuildTestEuropa -a generator config
+
+    if test "$generator" = "Xcode"
+        set extra_build_flags "-quiet"
+    end
+
     cmake .. -G $generator -DCMAKE_BUILD_TYPE=$config -DRUN_AUVAL_OVER_HTTP=ON &&
-    cmake --build . --config $config &&
+    cmake --build . --config $config -- $extra_build_flags &&
     ctest . -C $config -j 4 --output-on-failure
 
     tput bel
