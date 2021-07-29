@@ -1,0 +1,132 @@
+"allow for recursive file searching
+set path+=**
+
+" Set line numbers
+set number
+
+" Sets how many lines of history VIM has to remember
+set history=100
+
+" Enable filetype plugins
+filetype plugin on
+filetype indent on
+
+" Set to auto read when a file is changed
+set autoread
+
+" autoread even when changed outside of vim
+au FocusGained,BufEnter * :silent! !
+au FocusLost,WinLeave * :silent! w
+
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+let mapleader=" "
+
+" Fast saving
+nmap <leader>w :w!<cr>
+
+" Fast search
+nmap <leader>r :Rg
+
+" Lazy macro repeat
+nmap <leader>m @@
+
+" start typing a search/replace command using current word
+nnoremap <Leader>s :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
+
+
+" Set 7 lines to the cursor - when moving vertically using j/k
+set scrolloff=7
+
+" Turn on the WiLd menu, tab completion of commands
+set wildmenu
+
+"" Configure backspace so it acts as it should act
+set backspace=eol,start,indent
+
+" allows h and l to move to the next line if at a boundary
+set whichwrap+=h,l
+
+" Ignore case when searching
+set ignorecase
+
+" When searching try to be smart about cases, case ignored until caps typed
+set smartcase
+
+" Highlight search results
+set hlsearch
+
+" incrementally search, moving each time a key is pressed
+set incsearch
+
+" Don't redraw while executing macros (good performance config)
+set lazyredraw
+
+" split and automatically move to new pane
+set splitright
+
+" Show matching brackets when text indicator is over them
+set showmatch
+
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+
+" Use spaces instead of tabs
+set expandtab
+
+" Be smart when using tabs
+set smarttab
+
+" 1 tab == 4 spaces
+set shiftwidth=4
+set tabstop=4
+
+" Linebreak on 500 characters
+" TODO: Maybe remove?
+"set lbr
+"set tw=10
+
+set ai "Auto indent
+set wrap "Wrap lines
+
+" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" " => Moving around, tabs, windows and buffers
+" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Treat long lines as break lines (useful when moving around in them)
+map j gj
+map k gk
+
+" " Smart way to move between windows
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" Useful mappings for managing tabs
+map <silent> <leader>t :tabnew<cr>
+
+" Remember info about open buffers on close
+set viminfo^=%
+
+" Splits
+map <leader>v :vs<cr>
+
+"" Simplify pasting and copying to system clipboard
+map <leader>y "*y
+map <leader>Y "*e
+map <leader>p "*p
+map <leader>P "*P
+
+" Use system clipboard automatically
+"set clipboard=unnamed
+
+" set colon to semicolon
+nnoremap ; :
+
+nmap <C-]> :vsc Edit.GoToDefinition<CR>
+nmap <C-O> :vsc View.NavigateBackward<CR>
+nmap <C-I> :vsc View.NagivateForward<CR>
