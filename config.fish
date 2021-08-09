@@ -32,34 +32,35 @@
 # => Environment variables
 #######################################################################
 
+
 # remote logins (ssh)
 
 # PATHS (cd)
-set PERSONAL ~/Code/personal
-set WORK_TRIALS ~/Code/work
-set DOTFILES ~/dotfiles
+set -x PERSONAL ~/code/personal/
+set -x DOTFILES ~/dotfiles/
+set -x CONTRIB_PATH ~/git/contrib2/
 
-set EUROPA ~/Documents/Code/cjappl_europa_main/
+set -x ENGINE ~/git/game-engine/
+set -x FLAG ~/git/fflag-config
+
 set PERFORCE ~/Perforce
-set BUS ~/Documents/Code/atmos-bus-dynamics/
 
 set AU ~/Library/Audio/Plug-Ins/Components
 set VST ~/Library/Audio/Plug-Ins/VST3
 set AAX "/Library/Application Support/Avid/Audio/Plug-Ins/"
 
+# PATH
+set PATH "$CONTRIB_PATH/cmake/cmake-3.18.2-Darwin-x86_64/CMake.app/Contents/bin" "$ENGINE/Tools/Util" $PATH
+
 # P4 
-set -x P4USER 'cjappl'
+set -x P4USER '$USER'
 set -x P4PORT 'perforce:1666'
-set -x P4CLIENT 'cjappl_europa_dabs_1_0_new'
+set -x P4CLIENT ''
 set -x P4DIFF 'nvim -d'
 set -x EDITOR 'nvim'
 set -x P4MERGE '/Applications/p4merge.app/Contents/MacOS/p4merge'
 
-
-set -x RIPGREP_CONFIG_PATH '/Users/cjappl/.ripgreprc'
-
-#set -x SDK_ROOT (xcrun --sdk macosx --show-sdk-path) 2> /dev/null 1>&2
-#set -x SDKROOT (xcrun --sdk macosx --show-sdk-path) 2> /dev/null 1>&2
+set -x RIPGREP_CONFIG_PATH (echo $HOME'/.ripgreprc')
 
 #######################################################################
 # => Aliases and functions
@@ -82,12 +83,6 @@ function rgpy
     rg --type py $argv 
 end
 
-
-function coverage_run -a src_dir test_dir
-    coverage run --source $src_dir -m py.test $test_dir -v
-    coverage report -m --fail-under=100
-end
-
 function makeBuildTestEuropa -a generator config
 
     if test "$generator" = "Xcode"
@@ -101,7 +96,57 @@ function makeBuildTestEuropa -a generator config
     tput bel
 end
 
-set -x CTEST_PARALLEL_LEVEL 4
+function generateEngine -a generator
+    python3 Client/cmake/configure.py --noopt --x64 --$generator
+end
+
+function testEngine -a generator
+    python3 Client/cmake/configure.py --noopt --x64 --$generator --common-tests --target App.UnitTest.Run
+end
+
+function flipFlag -a flagName
+    if test -z $flagName
+        echo "No flag name passed"
+        return
+    end
+
+    set fname flags/capple/$flagName.json
+    cd $FLAG
+
+    git checkout master &&
+    git pull > /dev/null &&
+    git checkout -b capple/flip-$flagName &&
+    cp simple_example.json $fname
+
+end
+
+function flipFlagCommit -a flagName
+    set fname flags/capple/$flagName.json
+    flipFlag $flagName
+
+    git add $fname &&
+    git commit -m "Setting $flagName True on Common" &&
+    git push
+end
+
+# Open the Pull Request URL for your current directory's branch (base branch defaults to master)
+function openpr
+  set github_url (git remote -v | awk '/fetch/{print $2}' | sed -Ee 's#(git@|git://)#https://#' -e 's@com:@com/@' -e 's%\.git$%%' | awk '/github/')
+  set branch_name (git symbolic-ref HEAD | cut -d"/" -f 3,4)
+  set pr_url $github_url[1]"/pull/new/"$branch_name
+  open $pr_url
+end
+
+# Run git push and then immediately open the Pull Request URL
+function gpr
+  git push origin HEAD
+
+  if $status -eq 0 
+    openpr
+  else
+    echo 'failed to push commits and open a pull request.';
+  end
+end
 
 # finding my ip address
 alias ip_addr "ifconfig en0 inet | grep inet"
@@ -229,7 +274,7 @@ set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
 
 
 function remove_europa_plugins
-    set -l _plugin_paths "/Users/cjappl/Library/Audio/Plug-Ins/Components/Dolby"* "/Library/Audio/Plug-Ins/Components/Dolby"* "/Users/cjappl/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Application Support/Avid/Audio/Plug-Ins/Dolby"* "/Users/cjappl/Music/Ableton/User Library/Templates/"* "/Users/cjappl/Library/Preferences/Nuendo 10/Project Templates/Dolby Atmos Music/"* "/Users/cjappl/Library/Preferences/Cubase 10/Project Templates/Dolby Atmos Music/"* "/Users/cjappl/Documents/Pro Tools/Session Templates/Dolby Atmos Music/"* "/Users/cjappl/Music/Audio Music Apps/Project Templates/"* "/Users/cjappl/Documents/Pro Tools/IO Settings/"*
+    set -l _plugin_paths "/Users/$USER/Library/Audio/Plug-Ins/Components/Dolby"* "/Library/Audio/Plug-Ins/Components/Dolby"* "/Users/$USER/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Application Support/Avid/Audio/Plug-Ins/Dolby"* "/Users/$USER/Music/Ableton/User Library/Templates/"* "/Users/$USER/Library/Preferences/Nuendo 10/Project Templates/Dolby Atmos Music/"* "/Users/$USER/Library/Preferences/Cubase 10/Project Templates/Dolby Atmos Music/"* "/Users/$USER/Documents/Pro Tools/Session Templates/Dolby Atmos Music/"* "/Users/$USER/Music/Audio Music Apps/Project Templates/"* "/Users/$USER/Documents/Pro Tools/IO Settings/"*
 
     if test -z "$_plugin_paths"
         echo "Nothing installed"
@@ -247,7 +292,7 @@ function remove_europa_plugins
 end
 
 function list_europa_plugins
-    set -l _plugin_paths "/Users/cjappl/Library/Audio/Plug-Ins/Components/Dolby"* "/Library/Audio/Plug-Ins/Components/Dolby"* "/Users/cjappl/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Application Support/Avid/Audio/Plug-Ins/Dolby"* "/Users/cjappl/Music/Ableton/User Library/Templates/"* "/Users/cjappl/Library/Preferences/Nuendo 10/Project Templates/Dolby Atmos Music/"* "/Users/cjappl/Library/Preferences/Cubase 10/Project Templates/Dolby Atmos Music/"* "/Users/cjappl/Documents/Pro Tools/Session Templates/Dolby Atmos Music/"* "/Users/cjappl/Music/Audio Music Apps/Project Templates/"* "/Users/cjappl/Documents/Pro Tools/IO Settings/"*
+    set -l _plugin_paths "/Users/$USER/Library/Audio/Plug-Ins/Components/Dolby"* "/Library/Audio/Plug-Ins/Components/Dolby"* "/Users/$USER/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Application Support/Avid/Audio/Plug-Ins/Dolby"* "/Users/$USER/Music/Ableton/User Library/Templates/"* "/Users/$USER/Library/Preferences/Nuendo 10/Project Templates/Dolby Atmos Music/"* "/Users/$USER/Library/Preferences/Cubase 10/Project Templates/Dolby Atmos Music/"* "/Users/$USER/Documents/Pro Tools/Session Templates/Dolby Atmos Music/"* "/Users/$USER/Music/Audio Music Apps/Project Templates/"* "/Users/$USER/Documents/Pro Tools/IO Settings/"*
 
     for path in $_plugin_paths
         echo $path 

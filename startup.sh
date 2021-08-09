@@ -44,6 +44,10 @@ killall Finder
 mkdir -p ~/Code/personal/
 git clone https://github.com/wfxr/forgit.git ~/Code/personal/
 
+# set fish as your shell
+which fish | sudo tee -a /etc/shells
+chsh -s $(which fish)
+
 echo "Make sure to change your startup command in iTerm preferences->Profiles->General to be " 
 echo "tmux attach -t init; or tmux new -s init" 
 echo "tmux attach -t init || tmux new -s init"

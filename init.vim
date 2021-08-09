@@ -52,6 +52,7 @@ Plugin 'ncm2/ncm2-path'  " path completion
 Plugin 'craigemery/vim-autotag' " auto ctagging
 Plugin 'vim-airline/vim-airline'
 Plugin 'ayu-theme/ayu-vim'
+Plugin 'nixprime/cpsm'
 Bundle 'edkolev/tmuxline.vim'
 " End configuration, makes the plugins available
 call vundle#end()
@@ -71,8 +72,9 @@ let g:ncm2_pyclang#library_path = '/Applications/Xcode.app/Contents/Developer/To
 let g:ncm2_pyclang#database_path = [
             \ 'compile_commands.json',
             \ 'build/compile_commands.json',
-            \ 'Darwin/compile_commands.json',
-            \ 'AtmosBusDynamics/build/compile_commands.json'
+            \ 'build/ninja/studio/noopt/compile_commands.json',
+            \ '../build/ninja/studio/noopt/compile_commands.json',
+            \ '/Users/capple/git/game-engine/build/ninja/studio/noopt/compile_commands.json',
             \ ]
 
 " When the <Enter> key is pressed while the popup menu is visible, it only
@@ -170,10 +172,12 @@ inoremap <C-c> <Esc>
 
 " disable search of certain folders
 let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/](Darwin|Darwin_external|contrib|build|build_release|build_OSX|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info)$',
+    \ 'dir': '\v[\/](build|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info|*.LegacyAssemblies|*ThirdParty*|*Tools*)$',
     \ 'file': '\v\.(lst|so|swp|zip|gz|tar|png|jpg|pyc)$'
     \ }
-let g:ctrlp_cmd = 'CtrlP'
+
+"let g:ctrlp_user_command = 'fd --type f --color=never "" %s'
+"let g:ctrlp_match_func = { 'match': 'cpsm#CtrlPMatch' }
 
 " Don't use git as the hierarchy, just do the current directory and lower
 let g:ctrlp_working_path_mode = 'wa'
@@ -266,6 +270,7 @@ set scrolloff=7
 
 " Turn on the WiLd menu, tab completion of commands
 set wildmenu
+set wildmode=list:longest,full
 
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc,*.log
@@ -412,12 +417,12 @@ func! DeleteTrailingWS()
   exe "normal `z"
 endfunc
 
-autocmd BufWrite *.py :call DeleteTrailingWS()
+"autocmd BufWrite *.py :call DeleteTrailingWS()
 
-autocmd BufWrite *.cpp :call DeleteTrailingWS()
-autocmd BufWrite *.h :call DeleteTrailingWS()
+"autocmd BufWrite *.cpp :call DeleteTrailingWS()
+"autocmd BufWrite *.h :call DeleteTrailingWS()
 
-autocmd BufWrite *.vim :call DeleteTrailingWS()
+"autocmd BufWrite *.vim :call DeleteTrailingWS()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Spell checking
@@ -517,4 +522,5 @@ endfunction
 command Format   call ClangFormatFunction()
 
 let g:python3_host_prog = '/usr/bin/python3'
+let g:python_host_prog = '/usr/bin/python'
 
