@@ -1,0 +1,36 @@
+[user]
+	name = Chris Apple
+	email = capple@roblox.com
+[credential]
+	helper = osxkeychain
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+[core]
+	autocrlf = input
+	excludesfile = /Users/capple/.gitignore_global
+[push]
+	default = current
+[difftool]
+    prompt = true
+[diff]
+    tool = nvimdiff
+[difftool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[commit]
+	template = /Users/capple/.stCommitMsg
+[alias]
+	uncommit = reset --soft HEAD^
+    edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; nvim `f`"
+    add-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; git add `f`"
+
+[merge]
+	conflictstyle = diff3

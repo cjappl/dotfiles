@@ -25,6 +25,7 @@ ln ~/dotfiles/.tmux.conf ~/.tmux.conf > /dev/null
 ln ~/dotfiles/.astylerc ~/.astylerc > /dev/null
 ln ~/dotfiles/.ripgreprc ~/.ripgreprc > /dev/null
 ln ~/dotfiles/.xvimrc ~/.xvimrc > /dev/null
+ln ~/dotfiles/gitconfig ~/.gitconfig > /dev/null
 
 pip3 install pynvim virtualfish pdbpp ipython flake8 --user
 
