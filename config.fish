@@ -68,7 +68,7 @@ set -x RIPGREP_CONFIG_PATH (echo $HOME'/.ripgreprc')
 
 
 function rh -a pattern 
-    rg $pattern -g "!qa/*" -g "!Darwin/*" -g "!contrib/*" -g "!build*/*" -g "!MacOSX" -g "!*.html" -g "!*.js" $argv
+    rg -g "!qa/*" -g "!Darwin/*" -g "!contrib/*" -g "!build/*" -g "!MacOSX" -g "!*.html" -g "!*.js" "Client.LegacyAssemblies/*" $pattern
 end
 
 function rgcmake
@@ -141,7 +141,7 @@ end
 function gpr
   git push origin HEAD
 
-  if $status -eq 0 
+  if test $status -eq 0 
     openpr
   else
     echo 'failed to push commits and open a pull request.';

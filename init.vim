@@ -67,7 +67,7 @@ autocmd BufEnter * call ncm2#enable_for_buffer()
 " IMPORTANT: :help Ncm2PopupOpen for more information
 set completeopt=noinsert,menuone,noselect
 
-let g:ncm2_pyclang#library_path = '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/libclang.dylib'
+let g:ncm2_pyclang#library_path = '/usr/local/Cellar/llvm/12.0.1/lib/libclang.dylib'
 
 let g:ncm2_pyclang#database_path = [
             \ 'compile_commands.json',
@@ -523,4 +523,3 @@ command Format   call ClangFormatFunction()
 
 let g:python3_host_prog = '/usr/bin/python3'
 let g:python_host_prog = '/usr/bin/python'
-
