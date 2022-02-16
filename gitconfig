@@ -28,9 +28,9 @@
 [commit]
 	template = /Users/capple/.stCommitMsg
 [alias]
-	uncommit = reset --soft HEAD^
     edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; nvim `f`"
     add-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; git add `f`"
+	uncommit = reset --soft HEAD^
 
 [merge]
 	conflictstyle = diff3

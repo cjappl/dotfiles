@@ -83,52 +83,6 @@ function rgpy
     rg --type py $argv 
 end
 
-function makeBuildTestEuropa -a generator config
-
-    if test "$generator" = "Xcode"
-        set extra_build_flags "-quiet"
-    end
-
-    cmake .. -G $generator -DCMAKE_BUILD_TYPE=$config -DRUN_AUVAL_OVER_HTTP=ON &&
-    cmake --build . --config $config -- $extra_build_flags &&
-    ctest . -C $config -j 4 --output-on-failure
-
-    tput bel
-end
-
-function generateEngine -a generator
-    python3 Client/cmake/configure.py --noopt --x64 --$generator
-end
-
-function testEngine -a generator
-    python3 Client/cmake/configure.py --noopt --x64 --$generator --common-tests --target App.UnitTest.Run
-end
-
-function flipFlag -a flagName
-    if test -z $flagName
-        echo "No flag name passed"
-        return
-    end
-
-    set fname flags/capple/$flagName.json
-    cd $FLAG
-
-    git checkout master &&
-    git pull > /dev/null &&
-    git checkout -b capple/flip-$flagName &&
-    cp simple_example.json $fname
-
-end
-
-function flipFlagCommit -a flagName
-    set fname flags/capple/$flagName.json
-    flipFlag $flagName
-
-    git add $fname &&
-    git commit -m "Setting $flagName True on Common" &&
-    git push
-end
-
 # Open the Pull Request URL for your current directory's branch (base branch defaults to master)
 function openpr
   set github_url (git remote -v | awk '/fetch/{print $2}' | sed -Ee 's#(git@|git://)#https://#' -e 's@com:@com/@' -e 's%\.git$%%' | awk '/github/')
@@ -146,6 +100,23 @@ function gpr
   else
     echo 'failed to push commits and open a pull request.';
   end
+end
+
+function mergestable
+    set original_branch (git rev-parse --abbrev-ref HEAD)
+    if test $original_branch = "stable"
+        return
+    end
+    echo "Updating stable" && git switch stable > /dev/null && git pull upstream stable > /dev/null && 
+    echo "Merging to branch" $original_branch && git switch $original_branch > /dev/null && git merge stable --no-edit > /dev/null
+    git status 
+end
+
+function convertWavMp3 -a folder
+   for file in {$folder}/*.wav
+       set rootname (echo $file | sed 's/\.[^.]*$//')
+       lame -b 320 -h "$file" "$rootname.mp3"
+   end
 end
 
 # finding my ip address

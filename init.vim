@@ -39,43 +39,22 @@ call vundle#begin()
 
 " Plugins
 Plugin 'VundleVim/Vundle.vim' " Bundler
-Plugin 'dense-analysis/ale' " auto syntax checking
 Plugin 'ctrlpvim/ctrlp.vim' " fuzzy search file finding
+Plugin 'neoclide/coc.nvim'
 Plugin 'roxma/python-support.nvim'  " requirement for some other packages
 Plugin 'jremmen/vim-ripgrep' " recursive grep
 Plugin 'pboettch/vim-cmake-syntax'  " syntax highlighting for cmake
-Plugin 'ncm2/ncm2'      " autocomplete engine
-Plugin 'roxma/nvim-yarp'   " c++ autocomplete
-Plugin 'ncm2/ncm2-pyclang' " python and c++ autocomplete
-Plugin 'ncm2/ncm2-jedi'  " python autocomplete
-Plugin 'ncm2/ncm2-path'  " path completion
 Plugin 'craigemery/vim-autotag' " auto ctagging
 Plugin 'vim-airline/vim-airline'
 Plugin 'ayu-theme/ayu-vim'
-Plugin 'nixprime/cpsm'
 Bundle 'edkolev/tmuxline.vim'
+
 " End configuration, makes the plugins available
 call vundle#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set peekaboo window so it's a bit bigger
 let g:peekaboo_window = "vert bo 45new"
-
-" enable ncm2 for all buffers
-autocmd BufEnter * call ncm2#enable_for_buffer()
-
-" IMPORTANT: :help Ncm2PopupOpen for more information
-set completeopt=noinsert,menuone,noselect
-
-let g:ncm2_pyclang#library_path = '/usr/local/Cellar/llvm/12.0.1/lib/libclang.dylib'
-
-let g:ncm2_pyclang#database_path = [
-            \ 'compile_commands.json',
-            \ 'build/compile_commands.json',
-            \ 'build/ninja/studio/noopt/compile_commands.json',
-            \ '../build/ninja/studio/noopt/compile_commands.json',
-            \ '/Users/capple/git/game-engine/build/ninja/studio/noopt/compile_commands.json',
-            \ ]
 
 " When the <Enter> key is pressed while the popup menu is visible, it only
 " hides the menu. Use this mapping to close the menu and also start a new
@@ -106,66 +85,19 @@ let g:airline_symbols.space = "\ua0"
 "    \ 'right' : '',
 "    \ 'right_alt' : '<',
 "    \ 'space' : ' '}
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Ale
+" => Coc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" NOTE: ALE currently doesn't work on C++ header files: https://github.com/w0rp/ale/issues/782
-let g:ale_sign_error = '✖'
-let g:ale_sign_warning = '⚠'
-let g:ale_statusline_format =[' %d E ', ' %d W ', '']
-let g:ale_lint_on_text_changed = 'never'  " run lint in normal mode only
-" suggested linters:
-"     pip-install: cmakelint, flake8, autopep8, rstcheck, pydocstyle
-"     brew install: shellcheck(takes forever to install)
-"     npm install: prettier (for javascript, css, json, markdown, more)
-let g:ale_virtualenv_dir_names = [
-            \ '.env', 'env', 've-py3', 've', 'virtualenv', 'venv',
-            \ $HOME.'/.local/share/nvim/plugged/python-support.nvim/autoload/nvim_py3'
-            \ ]
-let g:ale_python_flake8_options = '--ignore=E501'
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 
-"'python': ['remove_trailing_lines', 'trim_whitespace'],
-let g:ale_fixers = {
-            \ 'python': [],
-            \ 'cpp': [],
-            \ 'objcpp': [],
-            \ 'cmake': []
-            \ }
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
-" so the clang checker can find the compile_commands.json file
-let g:ale_c_build_dir_names = ['build_osx']
-
-let g:ale_c_clangformat_style_option = 'file'
-
-let g:ale_cpp_clangtidy_checks = ["*,-llvmlibc-*,-google*,-llvm-header-guard,-*special-member-functions,-readability-else-after-return,-*uppercase-literal-suffix,-fuchsia-default-arguments,-readability-const-return-type,-misc-unused-parameters,-*-use-equals-default,-readability-redundant-control-flow,-readability-implicit-bool-conversion,-modernize-return-braced-init-list,-*-magic-numbers,-clang-diagnostic-error,-cert-err58-cpp,-fuchsia-statically-constructed-objects,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-hicpp-no-array-decay,-modernize-use-trailing-return-type,-fuchsia-default-arguments-calls"]
-
-let g:ale_cpp_clang_options = '-Wall -Wpedantic'
-
-let g:ale_linters = {'py': ['flake8'],
-  \ 'objc': ['clang', 'clangcheck', 'clangtidy'],
-  \ 'objcpp': ['clang', 'clangcheck', 'clangtidy'],
-  \ 'cpp': ['clang', 'clangcheck', 'clangtidy'],
-  \ 'hpp': ['clang', 'clangcheck', 'clangtidy'],
-  \}
-
-let g:ale_c_clangformat_use_local_file=1
-let g:ale_c_clangformat_style_option="file"
-
-let g:ale_c_parse_compile_commands=1
-let g:ale_c_parse_makefile=1
-
-" Fix on save
-let g:ale_fix_on_save = 1
-
-" use C-k/C-j to jump from error to error
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
-
-" Map Ctrl-C to Escape, mainly to trigger autocmd for ALE when exiting insert mode
-inoremap <C-c> <Esc>
-"let g:ale_lint_on_insert_leave = 1  " run lint when leaving insert mode(good when ale_lint_on_text_changed is 'normal')
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => ctrlp
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -506,7 +438,9 @@ function! HeaderSwitch()
   endif
 endfun
 
-nnoremap <silent> <tab> :call HeaderSwitch()<CR>
+"nnoremap <silent> <tab> :vsplit % :CocCommand clangd.switchSourceHeader<CR>
+nnoremap <silent> <tab> :vs<CR>:CocCommand clangd.switchSourceHeader<CR>
+
 
 " auto reload vimrc
 augroup myvimrc
