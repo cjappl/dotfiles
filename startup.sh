@@ -6,7 +6,7 @@ set -e
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-brew install fish python nvim tmux fzf ripgrep git ctags bat fastmod
+brew install fish python nvim tmux fzf ripgrep git ctags bat fastmod node
 
 brew install --cask firefox
 brew install --cask iterm2
@@ -33,6 +33,9 @@ pip3 install pynvim virtualfish pdbpp ipython flake8 --user
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 nvim +PluginInstall +qall
 nvim +PythonSupportInitPython3 +qall
+nvim +PythonSupportInitPython2 +qall
+nvim +CocInstall coc-clangd +qall
+nvim +CocInstall coc-pyright +qall
 
 git clone https://github.com/powerline/fonts ~/Downloads/fonts
 chmod +x ~/Downloads/fonts/install.sh
