@@ -1,0 +1,265 @@
+" CJAPPL .vimrc
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                        .OO
+"                       .OOOO
+"                      .OOOO'
+"                      OOOO'          .-~~~~-.
+"                      OOO'          /   (o)(o)
+"              .OOOOOO `O .OOOOOOO. /      .. |
+"          .OOOOOOOOOOOO OOOOOOOOOO/\    \____/
+"        .OOOOOOOOOOOOOOOOOOOOOOOO/ \\   ,\_/
+"       .OOOOOOO%%OOOOOOOOOOOOO(#/\     /.
+"      .OOOOOO%%%OOOOOOOOOOOOOOO\ \\  \/OO.
+"     .OOOOO%%%%OOOOOOOOOOOOOOOOO\   \/OOOO.
+"     OOOOO%%%%OOOOOOOOOOOOOOOOOOO\_\/\OOOOO
+"     OOOOO%%%OOOOOOOOOOOOOOOOOOOOO\###)OOOO
+"     OOOOOO%%OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+"     OOOOOOO%OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+"     `OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'
+"   .-~~\OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'
+"  / _/  `\(#\OOOOOOOOOOOOOOOOOOOOOOOOOOOO'
+" / / \  / `~~\OOOOOOOOOOOOOOOOOOOOOOOOOO'
+"|/'  `\//  \\ \OOOOOOOOOOOOOOOOOOOOOOOO'
+"       `-.__\_,\OOOOOOOOOOOOOOOOOOOOO'
+"           `OO\#)OOOOOOOOOOOOOOOOOOO'
+"             `OOOOOOOOO''OOOOOOOOO'
+"               `""""""'  `""""""'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Vundle
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set shell=bash
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set peekaboo window so it's a bit bigger
+let g:peekaboo_window = "vert bo 45new"
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Enable syntax highlighting
+syntax enable
+
+"try
+"    colorscheme desert
+"catch
+"endtry
+
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
+
+let ayucolor="dark"   " for dark version of theme
+colorscheme ayu
+
+set background=dark
+
+" Set utf8 as standard encoding and en_US as the standard language
+set encoding=utf8
+
+" Use unix as the standard file type
+set ffs=unix
+
+" highlight colors
+"hi Search ctermbg=grey
+"hi Search ctermfg=black
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" file browsing with netrw
+let g:netrw_banner=0  " disable banner
+let g:netrw_browse_split=4 " open in prior window
+let g:netrw_altv=1 "open splits to the right with v
+let g:netrw_liststyle=3 "tree
+
+" allow for recursive file searching
+set path+=**
+
+" Set line numbers
+set number
+
+" Sets how many lines of history VIM has to remember
+set history=100
+
+" Enable filetype plugins
+filetype plugin on
+filetype indent on
+
+" Set to auto read when a file is changed
+set autoread
+
+" autoread even when changed outside of vim
+au FocusGained,BufEnter * :silent! !
+au FocusLost,WinLeave * :silent! w
+
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+let mapleader=" "
+
+" Fast saving
+nmap <leader>w :w!<cr>
+
+" Fast search
+nmap <leader>r :Rg
+
+" Lazy macro repeat
+nmap <leader>m @@
+
+" start typing a search/replace command using current word
+nnoremap <Leader>s :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
+
+" Disabling auto commenting
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM user interface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set 7 lines to the cursor - when moving vertically using j/k
+set scrolloff=7
+
+" Turn on the WiLd menu, tab completion of commands
+set wildmenu
+set wildmode=list:longest,full
+
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc,*.log
+if has("win16") || has("win32")
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+else
+    set wildignore+=.git\*,.hg\*,.svn\*,.tox\*,.build\*,.dist\*
+endif
+
+"Always show current position
+set ruler
+
+" Configure backspace so it acts as it should act
+set backspace=eol,start,indent
+
+" allows h and l to move to the next line if at a boundary
+set whichwrap+=h,l
+
+" Ignore case when searching
+set ignorecase
+
+" When searching try to be smart about cases, case ignored until caps typed
+set smartcase
+
+" Highlight search results
+set hlsearch
+
+" incrementally search, moving each time a key is pressed
+set incsearch
+
+" Don't redraw while executing macros (good performance config)
+set lazyredraw
+
+" split and automatically move to new pane
+set splitright
+
+" Show matching brackets when text indicator is over them
+set showmatch
+
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+
+" highlight all replacements as they go, and preview in a split
+if has('nvim')
+    set inccommand=split
+endif
+
+" Auto jump to last spot exited in the current file
+autocmd BufReadPost *
+      \  if line("'\"") > 1 && line("'\"") <= line("$")
+      \|   exe 'normal! g`"zvzz'
+      \| endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files, backups and undo
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Turn backup off, since most stuff is in SVN, git et.c anyway...
+set nobackup
+set nowb
+set noswapfile
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text, tab and indent related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use spaces instead of tabs
+set expandtab
+
+" Be smart when using tabs
+set smarttab
+
+" 1 tab == 4 spaces
+set shiftwidth=4
+set tabstop=4
+
+" Linebreak on 500 characters
+" TODO: Maybe remove?
+"set lbr
+"set tw=10
+
+set ai "Auto indent
+set wrap "Wrap lines
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moving around, tabs, windows and buffers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Treat long lines as break lines (useful when moving around in them)
+map j gj
+map k gk
+
+" Smart way to move between windows
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" Useful mappings for managing tabs
+map <silent> <leader>t :tabnew<cr>
+
+" Return to last edit position when opening files (You want this!)
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
+" Remember info about open buffers on close
+set viminfo^=%
+
+" Splits
+map <leader>v :vs<cr>
+
+""""""""""""""""""""""""""""""
+" => Status line
+""""""""""""""""""""""""""""""
+" Always show the status line
+set laststatus=2
+
+"set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Misc
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Simplify pasting and copying to system clipboard
+map <leader>y "*y
+map <leader>Y "*e
+map <leader>p "*p
+map <leader>P "*P
+
+" Use system clipboard automatically
+"set clipboard=unnamed
+
+" set colon to semicolon
+nnoremap ; :
+

@@ -36,12 +36,10 @@
 # remote logins (ssh)
 
 # PATHS (cd)
-set -x PERSONAL ~/code/personal/
-set -x DOTFILES ~/dotfiles/
-set -x CONTRIB_PATH ~/git/contrib2/
+set PERSONAL ~/code/personal/
+set DOTFILES ~/dotfiles/
 
-set -x ENGINE ~/git/game-engine/
-set -x FLAG ~/git/fflag-config
+set SPATIAL ~/code/spatial/
 
 set PERFORCE ~/Perforce
 
@@ -49,37 +47,25 @@ set AU ~/Library/Audio/Plug-Ins/Components
 set VST ~/Library/Audio/Plug-Ins/VST3
 set AAX "/Library/Application Support/Avid/Audio/Plug-Ins/"
 
-# PATH
-set PATH "$CONTRIB_PATH/cmake/cmake-3.18.2-Darwin-x86_64/CMake.app/Contents/bin" "$ENGINE/Tools/Util" $PATH
-
-# P4 
-set -x P4USER '$USER'
-set -x P4PORT 'perforce:1666'
-set -x P4CLIENT ''
-set -x P4DIFF 'nvim -d'
-set -x EDITOR 'nvim'
-set -x P4MERGE '/Applications/p4merge.app/Contents/MacOS/p4merge'
-
 set -x RIPGREP_CONFIG_PATH (echo $HOME'/.ripgreprc')
 
 #######################################################################
 # => Aliases and functions
 #######################################################################
 
-
-function rh -a pattern 
-    rg -g "!qa/*" -g "!Darwin/*" -g "!contrib/*" -g "!build/*" -g "!MacOSX" -g "!*.html" -g "!*.js" "Client.LegacyAssemblies/*" $pattern
+function rh -a pattern  --wraps "rg"
+    rg -g "!tps/*" -g "!windows/*" -g "!bin/*" -g "!lib/*" -g "!build/*" -g "!*.xcodeproj" $pattern
 end
 
-function rgcmake
+function rgcmake --wraps "rg"
     rg --type cmake $argv
 end
 
-function rgcpp
+function rgcpp --wraps "rg"
     rg --type cpp $argv
 end
 
-function rgpy 
+function rgpy  --wraps "rg"
     rg --type py $argv 
 end
 
@@ -102,13 +88,13 @@ function gpr
   end
 end
 
-function mergestable
+function mergemain
     set original_branch (git rev-parse --abbrev-ref HEAD)
-    if test $original_branch = "stable"
+    if test $original_branch = "main"
         return
     end
-    echo "Updating stable" && git switch stable > /dev/null && git pull upstream stable > /dev/null && 
-    echo "Merging to branch" $original_branch && git switch $original_branch > /dev/null && git merge stable --no-edit > /dev/null
+    echo "Updating main" && git switch main > /dev/null && git pull upstream main > /dev/null && 
+    echo "Merging to branch" $original_branch && git switch $original_branch > /dev/null && git merge main --no-edit > /dev/null
     git status 
 end
 
@@ -117,6 +103,14 @@ function convertWavMp3 -a folder
        set rootname (echo $file | sed 's/\.[^.]*$//')
        lame -b 320 -h "$file" "$rootname.mp3"
    end
+end
+
+set SpatialReleaseDir $SPATIAL/build/bin/Release/
+set SpatialFlockNumber 122333
+
+function releaseClientCommand 
+    $SpatialReleaseDir/splclient -f $SpatialFlockNumber $argv
+
 end
 
 # finding my ip address
@@ -137,6 +131,8 @@ alias tabonly "tmux kill-window -a"
 #######################################################################
 # => Utility functions
 #######################################################################
+
+set -x CLANG_FORMAT_DIFF /opt/homebrew/Cellar/clang-format/14.0.0/share/clang/clang-format-diff.py
 
 function fish_user_key_bindings
     for mode in insert default visual
@@ -243,33 +239,6 @@ function fish_mode_prompt
 end
 set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
 
-
-function remove_europa_plugins
-    set -l _plugin_paths "/Users/$USER/Library/Audio/Plug-Ins/Components/Dolby"* "/Library/Audio/Plug-Ins/Components/Dolby"* "/Users/$USER/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Application Support/Avid/Audio/Plug-Ins/Dolby"* "/Users/$USER/Music/Ableton/User Library/Templates/"* "/Users/$USER/Library/Preferences/Nuendo 10/Project Templates/Dolby Atmos Music/"* "/Users/$USER/Library/Preferences/Cubase 10/Project Templates/Dolby Atmos Music/"* "/Users/$USER/Documents/Pro Tools/Session Templates/Dolby Atmos Music/"* "/Users/$USER/Music/Audio Music Apps/Project Templates/"* "/Users/$USER/Documents/Pro Tools/IO Settings/"*
-
-    if test -z "$_plugin_paths"
-        echo "Nothing installed"
-        return
-    end
-    
-    for path in $_plugin_paths
-        if test -e $path
-            echo "REMOVING " $path
-            sudo rm -rf $path 
-        else
-            echo "NOT FOUND " $path 
-        end
-    end
-end
-
-function list_europa_plugins
-    set -l _plugin_paths "/Users/$USER/Library/Audio/Plug-Ins/Components/Dolby"* "/Library/Audio/Plug-Ins/Components/Dolby"* "/Users/$USER/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Audio/Plug-Ins/VST3/Dolby"* "/Library/Application Support/Avid/Audio/Plug-Ins/Dolby"* "/Users/$USER/Music/Ableton/User Library/Templates/"* "/Users/$USER/Library/Preferences/Nuendo 10/Project Templates/Dolby Atmos Music/"* "/Users/$USER/Library/Preferences/Cubase 10/Project Templates/Dolby Atmos Music/"* "/Users/$USER/Documents/Pro Tools/Session Templates/Dolby Atmos Music/"* "/Users/$USER/Music/Audio Music Apps/Project Templates/"* "/Users/$USER/Documents/Pro Tools/IO Settings/"*
-
-    for path in $_plugin_paths
-        echo $path 
-    end
-end
-
 # settings library and include paths to look in the usr/local dir
 # necessary for pyliblo https://github.com/dsacre/pyliblo/issues/3
 set -gx C_INCLUDE_PATH /usr/local/include $C_INCLUDE_PATH
@@ -278,3 +247,4 @@ set -gx LIBRARY_PATH /usr/local/lib $LIBRARY_PATH
 set fish_greeting ""
 
 fish_vi_key_bindings
+eval "$(/opt/homebrew/bin/brew shellenv)"
