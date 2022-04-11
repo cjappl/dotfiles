@@ -48,6 +48,7 @@ Plugin 'craigemery/vim-autotag' " auto ctagging
 Plugin 'vim-airline/vim-airline'
 Plugin 'ayu-theme/ayu-vim'
 Bundle 'edkolev/tmuxline.vim'
+Bundle 'dag/vim-fish'
 
 " End configuration, makes the plugins available
 call vundle#end()
@@ -98,14 +99,19 @@ nmap <silent> gr <Plug>(coc-references)
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
+nmap <silent> <C-k> <Plug>(coc-diagnostic-prev)
+nmap <silent> <C-j> <Plug>(coc-diagnostic-next)
+
+nnoremap <silent> <tab> :vs<CR>:CocCommand clangd.switchSourceHeader<CR>
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => ctrlp
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " disable search of certain folders
 let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/](build|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info|*.LegacyAssemblies|*ThirdParty*|*Tools*)$',
-    \ 'file': '\v\.(lst|so|swp|zip|gz|tar|png|jpg|pyc)$'
+    \ 'dir': '\v[\/](build|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info|*.LegacyAssemblies|cmake-build-release|build_xcode|bin)$',
+    \ 'file': '\v\.(lst|so|swp|zip|gz|tar|png|jpg|pyc|o|a|pc|jam|la)$'
     \ }
 
 "let g:ctrlp_user_command = 'fd --type f --color=never "" %s'
@@ -250,6 +256,10 @@ set noerrorbells
 set novisualbell
 set t_vb=
 set tm=500
+
+" visualize tabs
+set listchars=tab:▷▷⋮
+set invlist
 
 " highlight all replacements as they go, and preview in a split
 if has('nvim')
@@ -437,10 +447,6 @@ function! HeaderSwitch()
     endif
   endif
 endfun
-
-"nnoremap <silent> <tab> :vsplit % :CocCommand clangd.switchSourceHeader<CR>
-nnoremap <silent> <tab> :vs<CR>:CocCommand clangd.switchSourceHeader<CR>
-
 
 " auto reload vimrc
 augroup myvimrc
