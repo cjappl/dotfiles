@@ -4,10 +4,10 @@ set -e
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/spatialloaner/.zprofile
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' > ~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
  
-brew install fish python nvim tmux fzf ripgrep git bat fastmod node yarn colordiff tldr cmake ninja clang-format
+brew install fish python nvim tmux fzf ripgrep git bat fastmod node yarn colordiff tldr cmake ninja clang-format yarn
 
 brew install --cask firefox
 brew install --cask iterm2
@@ -31,6 +31,7 @@ ln $dotfiles_dir/.astylerc ~/.astylerc > /dev/null
 ln $dotfiles_dir/.ripgreprc ~/.ripgreprc > /dev/null
 ln $dotfiles_dir/.xvimrc ~/.xvimrc > /dev/null
 ln $dotfiles_dir/gitconfig ~/.gitconfig > /dev/null
+ln $dotfiles_dir/gitignore ~/.gitignore > /dev/null
 ln $dotfiles_dir/.ideavimrc ~/.ideavimrc > /dev/null
 
 pip3 install pynvim virtualfish pdbpp ipython flake8 --user
@@ -39,6 +40,8 @@ pip3 install pynvim virtualfish pdbpp ipython flake8 --user
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 nvim +PythonSupportInitPython3 +qall
 nvim +PluginInstall +qall
+
+yarn install --cwd ~/.vim/bundle/coc.nvim
 nvim +CocInstall coc-clangd +qall
 nvim +CocInstall coc-pyright +qall
 

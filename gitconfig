@@ -1,6 +1,6 @@
 [user]
 	name = Chris Apple
-	email = capple@roblox.com
+	email = chrisa@spatialinc.com
 [credential]
 	helper = osxkeychain
 [filter "lfs"]
@@ -10,7 +10,7 @@
 	process = git-lfs filter-process
 [core]
 	autocrlf = input
-	excludesfile = /Users/capple/.gitignore_global
+	excludesfile = ~/.gitignore
 [push]
 	default = current
 [difftool]
