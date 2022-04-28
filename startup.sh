@@ -36,11 +36,9 @@ ln $dotfiles_dir/.ideavimrc ~/.ideavimrc > /dev/null
 pip3 install pynvim virtualfish pdbpp ipython flake8 --user
 
 # Install vundle and all git plugins
-
-# git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-nvim +PluginInstall +qall
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 nvim +PythonSupportInitPython3 +qall
-nvim +PythonSupportInitPython2 +qall
+nvim +PluginInstall +qall
 nvim +CocInstall coc-clangd +qall
 nvim +CocInstall coc-pyright +qall
 
