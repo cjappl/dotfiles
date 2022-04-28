@@ -106,11 +106,15 @@ function convertWavMp3 -a folder
 end
 
 set SpatialReleaseDir $SPATIAL/build/bin/Release/
+set SpatialReleaseDir $SPATIAL/build/bin/Debug/
 set SpatialFlockNumber 122333
 
 function releaseClientCommand 
     $SpatialReleaseDir/splclient -f $SpatialFlockNumber $argv
+end
 
+function debugClientCommand 
+    $SpatialDebugDir/splclient -f $SpatialFlockNumber $argv
 end
 
 # finding my ip address

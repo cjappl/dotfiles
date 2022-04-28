@@ -6,7 +6,10 @@ set -e
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-brew install fish python nvim tmux fzf ripgrep git ctags bat fastmod node
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/spatialloaner/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+ 
+brew install fish python nvim tmux fzf ripgrep git ctags bat fastmod node yarn
 
 brew install --cask firefox
 brew install --cask iterm2
@@ -30,7 +33,8 @@ ln ~/dotfiles/gitconfig ~/.gitconfig > /dev/null
 pip3 install pynvim virtualfish pdbpp ipython flake8 --user
 
 # Install vundle and all git plugins
-git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
+# git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 nvim +PluginInstall +qall
 nvim +PythonSupportInitPython3 +qall
 nvim +PythonSupportInitPython2 +qall
@@ -45,8 +49,8 @@ bash -c "~/Downloads/fonts/install.sh"
 defaults write com.apple.finder CreateDesktop false
 killall Finder
 
-mkdir -p ~/Code/personal/
-git clone https://github.com/wfxr/forgit.git ~/Code/personal/
+mkdir -p ~/code/personal/
+git clone https://github.com/wfxr/forgit.git ~/code/personal/forgit
 
 # set fish as your shell
 which fish | sudo tee -a /etc/shells

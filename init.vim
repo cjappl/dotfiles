@@ -110,7 +110,7 @@ nnoremap <silent> <tab> :vs<CR>:CocCommand clangd.switchSourceHeader<CR>
 
 " disable search of certain folders
 let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/](build|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info|*.LegacyAssemblies|cmake-build-release|build_xcode|bin)$',
+    \ 'dir': '\v[\/](build|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info|cmake-build.+|build_xcode|bin|objs)$',
     \ 'file': '\v\.(lst|so|swp|zip|gz|tar|png|jpg|pyc|o|a|pc|jam|la)$'
     \ }
 
@@ -361,8 +361,11 @@ endfunc
 
 "autocmd BufWrite *.py :call DeleteTrailingWS()
 
-"autocmd BufWrite *.cpp :call DeleteTrailingWS()
-"autocmd BufWrite *.h :call DeleteTrailingWS()
+autocmd BufWrite *.c :call DeleteTrailingWS()
+autocmd BufWrite *.cpp :call DeleteTrailingWS()
+autocmd BufWrite *.h :call DeleteTrailingWS()
+autocmd BufWrite CMakelists.txt :call DeleteTrailingWS()
+autocmd BufWrite Makefile :call DeleteTrailingWS()
 
 "autocmd BufWrite *.vim :call DeleteTrailingWS()
 
