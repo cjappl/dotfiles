@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# before running, this should live in ~/dotfiles
-
 set -e
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -14,22 +12,26 @@ brew install fish python nvim tmux fzf ripgrep git bat fastmod node yarn colordi
 brew install --cask firefox
 brew install --cask iterm2
 brew install --cask clion
+brew install --cask slack
 
 # run install step of fzf for command purposes
 $(brew --prefix)/opt/fzf/install
 
 echo "linking all config files" 
+
+dotfiles_dir=$(pwd)
 mkdir -p ~/.config/fish > /dev/null
-ln ~/dotfiles/config.fish ~/.config/fish/ > /dev/null
+ln $dotfiles_dir/config.fish ~/.config/fish/ > /dev/null
 
 mkdir -p ~/.config/nvim > /dev/null
-ln ~/dotfiles/init.vim ~/.config/nvim/ > /dev/null
+ln $dotfiles_dir/init.vim ~/.config/nvim/ > /dev/null
 
-ln ~/dotfiles/.tmux.conf ~/.tmux.conf > /dev/null
-ln ~/dotfiles/.astylerc ~/.astylerc > /dev/null
-ln ~/dotfiles/.ripgreprc ~/.ripgreprc > /dev/null
-ln ~/dotfiles/.xvimrc ~/.xvimrc > /dev/null
-ln ~/dotfiles/gitconfig ~/.gitconfig > /dev/null
+ln $dotfiles_dir/.tmux.conf ~/.tmux.conf > /dev/null
+ln $dotfiles_dir/.astylerc ~/.astylerc > /dev/null
+ln $dotfiles_dir/.ripgreprc ~/.ripgreprc > /dev/null
+ln $dotfiles_dir/.xvimrc ~/.xvimrc > /dev/null
+ln $dotfiles_dir/gitconfig ~/.gitconfig > /dev/null
+ln $dotfiles_dir/.ideavimrc ~/.ideavimrc > /dev/null
 
 pip3 install pynvim virtualfish pdbpp ipython flake8 --user
 
