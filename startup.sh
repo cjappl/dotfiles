@@ -7,7 +7,7 @@ set -e
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' > ~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
  
-brew install fish python nvim tmux fzf ripgrep git bat fastmod node yarn colordiff tldr cmake ninja clang-format yarn
+brew install fish python nvim tmux fzf ripgrep git bat fastmod node yarn colordiff tldr cmake ninja clang-format yarn stdman
 
 brew install --cask firefox
 brew install --cask iterm2

@@ -243,12 +243,31 @@ function fish_mode_prompt
 end
 set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
 
-# settings library and include paths to look in the usr/local dir
-# necessary for pyliblo https://github.com/dsacre/pyliblo/issues/3
-set -gx C_INCLUDE_PATH /usr/local/include $C_INCLUDE_PATH
-set -gx LIBRARY_PATH /usr/local/lib $LIBRARY_PATH
-
 set fish_greeting ""
 
 fish_vi_key_bindings
 eval "$(/opt/homebrew/bin/brew shellenv)"
+
+######## # Colors for less manpage
+set default $(tput sgr0)
+set red $(tput setaf 1)
+set green $(tput setaf 2)
+set purple $(tput setaf 5)
+set orange $(tput setaf 9)
+
+# Less colors for man pages
+set -x PAGER less
+# Begin blinking
+set -x LESS_TERMCAP_mb $red
+# Begin bold
+set -x LESS_TERMCAP_md $orange
+# End mode
+set -x LESS_TERMCAP_me $default
+# End standout-mode
+set -x LESS_TERMCAP_se $default
+# Begin standout-mode - info box
+set -x LESS_TERMCAP_so $purple
+# End underline
+set -x LESS_TERMCAP_ue $default
+# Begin underline
+set -x LESS_TERMCAP_us $green
