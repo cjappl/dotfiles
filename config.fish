@@ -40,6 +40,8 @@ set PERSONAL ~/code/personal/
 set DOTFILES ~/dotfiles/
 
 set SPATIAL ~/code/spatial/
+set SPATIAL_API ~/code/spatial-openapi/
+set ENV staging 
 
 set PERFORCE ~/Perforce
 
@@ -48,6 +50,7 @@ set VST ~/Library/Audio/Plug-Ins/VST3
 set AAX "/Library/Application Support/Avid/Audio/Plug-Ins/"
 
 set -x RIPGREP_CONFIG_PATH (echo $HOME'/.ripgreprc')
+
 
 #######################################################################
 # => Aliases and functions
@@ -88,6 +91,8 @@ function gpr
   end
 end
 
+alias gsc "git switch --create"
+
 function mergemain
     set original_branch (git rev-parse --abbrev-ref HEAD)
     if test $original_branch = "main"
@@ -105,16 +110,15 @@ function convertWavMp3 -a folder
    end
 end
 
-set SpatialReleaseDir $SPATIAL/build/bin/Release/
-set SpatialReleaseDir $SPATIAL/build/bin/Debug/
+set SpatialBinDir $SPATIAL/build/bin/
 set SpatialFlockNumber 122333
 
 function releaseClientCommand 
-    $SpatialReleaseDir/splclient -f $SpatialFlockNumber $argv
+    $SpatialBinDir/splclient -f $SpatialFlockNumber $argv
 end
 
-function debugClientCommand 
-    $SpatialDebugDir/splclient -f $SpatialFlockNumber $argv
+function runDaemon
+    $SPATIAL/build/bin/spldaemon $SPATIAL/app/daemon.cfg ~/daemoncfgs/capple.cfg
 end
 
 # finding my ip address
@@ -271,3 +275,6 @@ set -x LESS_TERMCAP_so $purple
 set -x LESS_TERMCAP_ue $default
 # Begin underline
 set -x LESS_TERMCAP_us $green
+
+# set folders to be teal for fish ls
+set -Ux LSCOLORS gxfxbEaEBxxEhEhBaDaCaD

@@ -41,14 +41,12 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim' " Bundler
 Plugin 'ctrlpvim/ctrlp.vim' " fuzzy search file finding
 Plugin 'neoclide/coc.nvim'
-Plugin 'roxma/python-support.nvim'  " requirement for some other packages
 Plugin 'jremmen/vim-ripgrep' " recursive grep
 Plugin 'pboettch/vim-cmake-syntax'  " syntax highlighting for cmake
-Plugin 'craigemery/vim-autotag' " auto ctagging
 Plugin 'vim-airline/vim-airline'
 Plugin 'ayu-theme/ayu-vim'
 Bundle 'edkolev/tmuxline.vim'
-Bundle 'dag/vim-fish'
+Plugin 'dag/vim-fish' " syntax highlighting for fish
 
 " End configuration, makes the plugins available
 call vundle#end()
@@ -94,7 +92,8 @@ let g:airline_symbols.space = "\ua0"
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gu <Plug>(coc-references)
+nmap <leader>f <Plug>(coc-fix-current)
 
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
@@ -103,6 +102,8 @@ nmap <silent> <C-k> <Plug>(coc-diagnostic-prev)
 nmap <silent> <C-j> <Plug>(coc-diagnostic-next)
 
 nnoremap <silent> <tab> :vs<CR>:CocCommand clangd.switchSourceHeader<CR>
+
+let g:coc_disable_transparent_cursor = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => ctrlp
@@ -272,6 +273,9 @@ autocmd BufReadPost *
       \|   exe 'normal! g`"zvzz'
       \| endif
 
+" highlight matching paren
+highlight MatchParen ctermbg=black guibg=grey
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -361,11 +365,10 @@ endfunc
 
 "autocmd BufWrite *.py :call DeleteTrailingWS()
 
-autocmd BufWrite *.c :call DeleteTrailingWS()
-autocmd BufWrite *.cpp :call DeleteTrailingWS()
-autocmd BufWrite *.h :call DeleteTrailingWS()
-autocmd BufWrite CMakelists.txt :call DeleteTrailingWS()
-autocmd BufWrite Makefile :call DeleteTrailingWS()
+"autocmd BufWrite *.c :call DeleteTrailingWS()
+"autocmd BufWrite *.cpp :call DeleteTrailingWS()
+"autocmd BufWrite *.h :call DeleteTrailingWS()
+"autocmd BufWrite Makefile :call DeleteTrailingWS()
 
 "autocmd BufWrite *.vim :call DeleteTrailingWS()
 
@@ -463,6 +466,3 @@ function! ClangFormatFunction()
    :e
 endfunction
 command Format   call ClangFormatFunction()
-
-let g:python3_host_prog = '/usr/bin/python3'
-let g:python_host_prog = '/usr/bin/python'

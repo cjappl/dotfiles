@@ -34,10 +34,6 @@ set nocompatible              " be iMproved, required
 filetype off                  " required
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Set peekaboo window so it's a bit bigger
-let g:peekaboo_window = "vert bo 45new"
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
@@ -174,17 +170,6 @@ set novisualbell
 set t_vb=
 set tm=500
 
-" highlight all replacements as they go, and preview in a split
-if has('nvim')
-    set inccommand=split
-endif
-
-" Auto jump to last spot exited in the current file
-autocmd BufReadPost *
-      \  if line("'\"") > 1 && line("'\"") <= line("$")
-      \|   exe 'normal! g`"zvzz'
-      \| endif
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -206,11 +191,6 @@ set smarttab
 set shiftwidth=4
 set tabstop=4
 
-" Linebreak on 500 characters
-" TODO: Maybe remove?
-"set lbr
-"set tw=10
-
 set ai "Auto indent
 set wrap "Wrap lines
 
@@ -228,24 +208,8 @@ map <C-l> <C-W>l
 " Useful mappings for managing tabs
 map <silent> <leader>t :tabnew<cr>
 
-" Return to last edit position when opening files (You want this!)
-autocmd BufReadPost *
-     \ if line("'\"") > 0 && line("'\"") <= line("$") |
-     \   exe "normal! g`\"" |
-     \ endif
-" Remember info about open buffers on close
-set viminfo^=%
-
 " Splits
 map <leader>v :vs<cr>
-
-""""""""""""""""""""""""""""""
-" => Status line
-""""""""""""""""""""""""""""""
-" Always show the status line
-set laststatus=2
-
-"set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Misc
@@ -257,9 +221,23 @@ map <leader>Y "*e
 map <leader>p "*p
 map <leader>P "*P
 
-" Use system clipboard automatically
-"set clipboard=unnamed
-
 " set colon to semicolon
 nnoremap ; :
+
+# ideavim only, try to mirror init.vim
+nnoremap <c-p> :action gotoFiles<CR>
+nnoremap gi :action GotoImplementation<CR>
+nnoremap gu :action FindUsages<CR>
+nnoremap gh :action CallHierarchy<CR>
+
+nnoremap <c-j> :action GotoNextError<CR>
+nnoremap <c-k> :action GotoPreviousError<CR>
+
+nnoremap <silent> <tab> :action GotoRelated<CR>
+nnoremap <leader>f :action ShowIntentionActions<CR>
+nnoremap <leader>e :action ShowErrorDescription<CR>
+
+nnoremap <leader>s :action RenameElement<CR>
+
+nnoremap <leader>x :action CIDR.Lang.IntroduceVariable<CR>
 

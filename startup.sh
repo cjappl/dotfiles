@@ -20,6 +20,7 @@ $(brew --prefix)/opt/fzf/install
 echo "linking all config files" 
 
 dotfiles_dir=$(pwd)
+
 mkdir -p ~/.config/fish > /dev/null
 ln $dotfiles_dir/config.fish ~/.config/fish/ > /dev/null
 
@@ -34,11 +35,10 @@ ln $dotfiles_dir/gitconfig ~/.gitconfig > /dev/null
 ln $dotfiles_dir/gitignore ~/.gitignore > /dev/null
 ln $dotfiles_dir/.ideavimrc ~/.ideavimrc > /dev/null
 
-pip3 install pynvim virtualfish pdbpp ipython flake8 --user
+pip3 install pynvim virtualfish pdbpp ipython flake8 jupyter --user
 
 # Install vundle and all git plugins
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-nvim +PythonSupportInitPython3 +qall
 nvim +PluginInstall +qall
 
 yarn install --cwd ~/.vim/bundle/coc.nvim

@@ -4,5 +4,7 @@ cmake-build-*/*
 .cache/clangd/*
 Testing/*
 
+xcode_build/*
+
 .clang-format
 capple.cfg
