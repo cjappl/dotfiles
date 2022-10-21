@@ -55,13 +55,6 @@ call vundle#end()
 " Set peekaboo window so it's a bit bigger
 let g:peekaboo_window = "vert bo 45new"
 
-" When the <Enter> key is pressed while the popup menu is visible, it only
-" hides the menu. Use this mapping to close the menu and also start a new
-" line.
-inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Airline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -104,6 +97,9 @@ nmap <silent> <C-j> <Plug>(coc-diagnostic-next)
 nnoremap <silent> <tab> :vs<CR>:CocCommand clangd.switchSourceHeader<CR>
 
 let g:coc_disable_transparent_cursor = 1
+
+inoremap <expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : "\<Tab>"
+inoremap <expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<S-Tab>"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => ctrlp

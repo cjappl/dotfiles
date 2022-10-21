@@ -225,7 +225,7 @@ map <leader>P "*P
 nnoremap ; :
 
 # ideavim only, try to mirror init.vim
-nnoremap <c-p> :action gotoFiles<CR>
+nnoremap <c-p> :action SearchEverywhere<CR>
 nnoremap gi :action GotoImplementation<CR>
 nnoremap gu :action FindUsages<CR>
 nnoremap gh :action CallHierarchy<CR>

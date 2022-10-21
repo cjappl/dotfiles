@@ -1,6 +1,6 @@
 [user]
 	name = Chris Apple
-	email = chrisa@spatialinc.com
+	email = 14171107+cjappl@users.noreply.github.com 
 [credential]
 	helper = osxkeychain
 [filter "lfs"]
@@ -11,10 +11,12 @@
 [core]
 	autocrlf = input
 	excludesfile = ~/.gitignore
+    pager = delta
 [push]
 	default = current
 [difftool]
     prompt = true
+    colorMoved = default
 [diff]
     tool = nvimdiff
 [difftool "nvimdiff"]
@@ -35,3 +37,12 @@
 	conflictstyle = diff3
 [log]
 	date = "local"
+
+[interactive]
+    diffFilter = delta --color-only
+[add.interactive]
+    useBuiltin = false # required for git 2.37.0
+
+[delta]
+    navigate = true    # use n and N to move between diff sections
+    side-by-side = false # side by side instead of interleaved

@@ -51,7 +51,6 @@ set AAX "/Library/Application Support/Avid/Audio/Plug-Ins/"
 
 set -x RIPGREP_CONFIG_PATH (echo $HOME'/.ripgreprc')
 
-
 #######################################################################
 # => Aliases and functions
 #######################################################################
@@ -134,7 +133,11 @@ alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.ca
 
 alias cat bat
 
-alias tabonly "tmux kill-window -a"
+alias ls lsd
+
+alias tabonly "tmux kill-window -a && tmux movew"
+
+[ -f /opt/homebrew/share/autojump/autojump.fish ]; and source /opt/homebrew/share/autojump/autojump.fish
 
 #######################################################################
 # => Utility functions
@@ -278,3 +281,5 @@ set -x LESS_TERMCAP_us $green
 
 # set folders to be teal for fish ls
 set -Ux LSCOLORS gxfxbEaEBxxEhEhBaDaCaD
+
+thefuck --alias | source
