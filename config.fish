@@ -51,6 +51,8 @@ set AAX "/Library/Application Support/Avid/Audio/Plug-Ins/"
 
 set -x RIPGREP_CONFIG_PATH (echo $HOME'/.ripgreprc')
 
+set PATH $HOME/.cargo/bin $PATH
+
 #######################################################################
 # => Aliases and functions
 #######################################################################
@@ -135,7 +137,7 @@ alias cat bat
 
 alias ls lsd
 
-alias tabonly "tmux kill-window -a && tmux movew"
+alias tabonly "tmux kill-window -a && tmux movew -r"
 
 [ -f /opt/homebrew/share/autojump/autojump.fish ]; and source /opt/homebrew/share/autojump/autojump.fish
 
