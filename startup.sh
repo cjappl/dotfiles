@@ -7,12 +7,7 @@ set -e
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' > ~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
  
-brew install fish python nvim tmux fzf ripgrep git bat fastmod node yarn colordiff tldr cmake ninja clang-format yarn stdman lsd git-delta fd
-
-brew install --cask firefox
-brew install --cask iterm2
-brew install --cask clion
-brew install --cask slack
+brew bundle
 
 # run install step of fzf for command purposes
 $(brew --prefix)/opt/fzf/install
