@@ -229,6 +229,7 @@ nnoremap <c-p> :action SearchEverywhere<CR>
 nnoremap gi :action GotoImplementation<CR>
 nnoremap gu :action FindUsages<CR>
 nnoremap gh :action CallHierarchy<CR>
+nnoremap <leader>rg :action FindInPath<CR>
 
 nnoremap <c-j> :action GotoNextError<CR>
 nnoremap <c-k> :action GotoPreviousError<CR>
@@ -240,4 +241,6 @@ nnoremap <leader>e :action ShowErrorDescription<CR>
 nnoremap <leader>s :action RenameElement<CR>
 
 nnoremap <leader>x :action CIDR.Lang.IntroduceVariable<CR>
+nnoremap <leader>cx :action copilot.disableCopilot<CR>
+nnoremap <leader>xc :action copilot.enableCopilot<CR>
 

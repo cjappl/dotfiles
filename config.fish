@@ -39,8 +39,8 @@
 set PERSONAL ~/code/personal/
 set DOTFILES ~/dotfiles/
 
-set SPATIAL ~/code/spatial/
-set SPATIAL_API ~/code/spatial-openapi/
+set SPATIAL ~/code/spatial
+set SPATIAL_API ~/code/spatial-openapi
 set ENV staging 
 
 set PERFORCE ~/Perforce
@@ -51,7 +51,13 @@ set AAX "/Library/Application Support/Avid/Audio/Plug-Ins/"
 
 set -x RIPGREP_CONFIG_PATH (echo $HOME'/.ripgreprc')
 
-set PATH $HOME/.cargo/bin $PATH
+set -x EDITOR (which nvim)
+
+fish_add_path $HOME/.cargo/bin/
+fish_add_path $HOME/code/splbootstrap/bin/
+fish_add_path $HOME/go/bin/
+
+set -x HOMEBREW_NO_ANALYTICS 1
 
 #######################################################################
 # => Aliases and functions
@@ -73,11 +79,25 @@ function rgpy  --wraps "rg"
     rg --type py $argv 
 end
 
-# Open the Pull Request URL for your current directory's branch (base branch defaults to master)
+function getparentbranchname
+    set current_branch_name (git rev-parse --abbrev-ref HEAD)
+    set parent_branch_name (git show-branch -a 2>/dev/null \
+      | grep '\*' \
+      | grep -v $current_branch_name \
+      | head -n1 \
+      | perl -ple 's/\[[A-Za-z]+-\d+\][^\]]+$//; s/^.*\[([^~^\]]+).*$/$1/')
+
+    echo $parent_branch_name
+end
+
+# Open the Pull Request URL for your current directory's branch, merges by default against the current branch's parent 
 function openpr
   set github_url (git remote -v | awk '/fetch/{print $2}' | sed -Ee 's#(git@|git://)#https://#' -e 's@com:@com/@' -e 's%\.git$%%' | awk '/github/')
-  set branch_name (git symbolic-ref HEAD | cut -d"/" -f 3,4)
-  set pr_url $github_url[1]"/pull/new/"$branch_name
+  set current_branch_name (git rev-parse --abbrev-ref HEAD)
+  # https://gist.github.com/joechrysler/6073741
+  set parent_branch_name (getparentbranchname)
+  # https://github.com/spatiallabs/spatial/compare/release-8.4...merge-PLAT-1234?expand=1
+  set pr_url $github_url[1]"/compare/$parent_branch_name...$current_branch_name?expand=1"
   open $pr_url
 end
 
@@ -94,32 +114,107 @@ end
 
 alias gsc "git switch --create"
 
-function mergemain
-    set original_branch (git rev-parse --abbrev-ref HEAD)
-    if test $original_branch = "main"
-        return
-    end
-    echo "Updating main" && git switch main > /dev/null && git pull upstream main > /dev/null && 
-    echo "Merging to branch" $original_branch && git switch $original_branch > /dev/null && git merge main --no-edit > /dev/null
-    git status 
-end
 
-function convertWavMp3 -a folder
-   for file in {$folder}/*.wav
-       set rootname (echo $file | sed 's/\.[^.]*$//')
-       lame -b 320 -h "$file" "$rootname.mp3"
-   end
-end
-
-set SpatialBinDir $SPATIAL/build/bin/
-set SpatialFlockNumber 122333
+set FLOCK 122333
 
 function releaseClientCommand 
-    $SpatialBinDir/splclient -f $SpatialFlockNumber $argv
+    set_color brgreen
+    echo $SPATIAL/build/bin/splclient -f $FLOCK $argv
+    set_color normal
+
+    #$SPATIAL/build/bin/splclient -f $FLOCK $argv 2>&1 | grep -E "got network instruction response|CRIT|WARN" | grep -v "permissions" | jq '{message}'
+    $SPATIAL/build/bin/splclient -f $FLOCK $argv 2>&1 | jq 'select(.eventname == "instruction.responserecieved") | {timestamp, eventname, status}'
+end
+
+function releaseClientLoadsceneStart -a scenename
+    releaseClientCommand loadscene $scenename "" "" "" "" true 
 end
 
 function runDaemon
     $SPATIAL/build/bin/spldaemon $SPATIAL/app/daemon.cfg ~/daemoncfgs/capple.cfg
+end
+
+function merge_to_release -a VERSION COMMIT
+    cd $SPATIAL
+    git checkout release-$VERSION-publish
+    and git pull
+
+    if test $status -ne 0
+        return $status
+    end
+
+    set JIRA (git log --oneline $COMMIT | head -1 | string match --regex --groups-only "\[(PLAT-.*)\]")
+
+    if test -n "$JIRA"
+        set MERGE_BRANCH = "merge-$JIRA-$VERSION"
+    else
+        echo "Jira ticket not found in commit, faling back to SHA"
+        set MERGE_BRANCH = "merge-$COMMIT-$VERSION"
+    end
+
+    git switch --create $MERGE_BRANCH
+    and git cherry-pick $COMMIT
+    and gpr
+    and git checkout main
+    git branch --delete $MERGE_BRANCH
+
+    return $status
+end
+
+function create_release_branch -a OLD_VERSION NEW_VERSION
+    cd $SPATIAL
+    git checkout main
+    and git pull
+
+    # sanity check you didn't mess it up
+    set FOUND_OLD_VERSION ($SPATIAL/scripts/extract-runtime-version.sh)
+    if not string match -q "$FOUND_OLD_VERSION" "$OLD_VERSION"
+        echo "Specified old version ($OLD_VERSION) does not match found old version ($FOUND_OLD_VERSION)" 2>&1
+        return 1
+    end
+
+    set USER_RESPONSE = ""
+
+    set NEW_RELEASE_BRANCH "release-$NEW_VERSION-publish"
+    while not string match -q "$USER_RESPONSE" "y"; and not string match -q "$USER_RESPONSE" "n"
+        read --prompt-str "Create new release branch $NEW_RELEASE_BRANCH? [y/n] > " USER_RESPONSE
+
+        if test $status -ne 0
+            return $status
+        end
+    end
+
+    if string match -q "$USER_RESPONSE" "n"
+        return 0
+    end
+
+    echo "Please increase splversion to match the provided new version"
+    sleep 1 
+    nvim $SPATIAL/include/splversions.h +16
+    if test $status -ne 0
+        return $status
+    end
+
+    set FOUND_NEW_VERSION ($SPATIAL/scripts/extract-runtime-version.sh)
+    if not string match -q "$FOUND_NEW_VERSION" "$NEW_VERSION"
+        echo "Specified new version ($NEW_VERSION) does not match found new version ($FOUND_NEW_VERSION)" 2>&1
+        return 1
+    end
+
+    git switch --create $NEW_RELEASE_BRANCH
+    and git push
+
+    if test $status -ne 0
+        return $status
+    end
+
+    set BUMP_BRANCH "bumpmain-$NEW_VERSION"
+    git checkout main
+    and git switch --create "$BUMP_BRANCH"
+    and git add $SPATIAL/include/splversions.h
+    and git commit -m "BUMP MAIN VERSION - $NEW_VERSION"
+    and gpr
+    and git branch --delete "$BUMP_BRANCH"
 end
 
 # finding my ip address
@@ -132,8 +227,6 @@ alias vim nvim
 
 # clear au cache
 alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.cache && rm ~/Library/Preferences/com.apple.audio.InfoHelper.plist"
-
-alias cat bat
 
 alias ls lsd
 
@@ -171,51 +264,22 @@ function please
   end
 end
 
+# copy the !! functionality of other shells
+function last_history_item; echo $history[1]; end
+abbr -a !! --position anywhere --function last_history_item
+
 #######################################################################
 # => Fzf 
 #######################################################################
 
+#set -x FORGIT_FZF_DEFAULT_OPTS "$FORGIT_FZF_DEFAULT_OPTS --layout=reverse-list --preview-window='down:80%' --height='90%'"
+set -x FORGIT_FZF_DEFAULT_OPTS "$FORGIT_FZF_DEFAULT_OPTS --layout=reverse-list"
 source $PERSONAL/forgit/conf.d/forgit.plugin.fish
 
-set -x FZF_DEFAULT_COMMAND 'rg --files 2> /dev/null'
-set -x FZF_CTRL_T_OPTS '--preview="cat {} 2> /dev/null" --preview-window=right:60%:wrap'
-
-function fcd
-    if set -q argv[1]
-        set searchdir $argv[1]
-    else
-        set searchdir $HOME
-    end
-
-    # https://github.com/fish-shell/fish-shell/issues/1362
-    set -l tmpfile (mktemp)
-    #rg --hidden --files -g "!*tox"  $searchdir 2> /dev/null | xargs -I {} dirname {} | uniq | fzf > $tmpfile
-    find $searchdir \( ! -regex '.*/\..*' \) ! -name __pycache__ -type d  2> /dev/null | fzf > $tmpfile
-    set -l destdir (cat $tmpfile)
-    rm -f $tmpfile
-
-    if test -z "$destdir"
-        return 1
-    end
-
-    cd $destdir
-end
-
-function fkill --description "Kill processes"
-  set -l __fkill__pid (ps -ef | sed 1d | eval "fzf $FZF_DEFAULT_OPTS -m --header='[kill:process]'" | awk '{print $2}')
-  set -l __fkill__kc $argv[1]
-
-  if test "x$__fkill__pid" != "x"
-    if test "x$argv[1]" != "x"
-      echo $__fkill__pid | xargs kill $argv[1]
-    else
-      echo $__fkill__pid | xargs kill -9
-    end
-    fkill
-  end
-end
-
-set FORGIT_FZF_DEFAULT_OPTS "$FORGIT_FZF_DEFAULT_OPTS --layout=reverse-list"
+set -x FZF_DEFAULT_COMMAND "fd --color=always --exclude .git . \$dir"
+set -x FZF_CTRL_T_COMMAND $FZF_DEFAULT_COMMAND
+set -x FZF_CTRL_T_OPTS '--preview="bat --color=always --number {} 2> /dev/null" --height=80% --preview-window=right:60%:wrap'
+set -x FZF_DEFAULT_OPTS "--ansi"
 
 #######################################################################
 # => colors 
@@ -248,6 +312,12 @@ function fish_mode_prompt
   end
   set_color white 
   echo '|'
+
+  set_color ED7440
+  echo (date +%H:%M)
+
+  set_color white 
+  echo '|'
   set_color normal
 end
 set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
@@ -263,6 +333,7 @@ set red $(tput setaf 1)
 set green $(tput setaf 2)
 set purple $(tput setaf 5)
 set orange $(tput setaf 9)
+
 
 # Less colors for man pages
 set -x PAGER less
@@ -285,3 +356,22 @@ set -x LESS_TERMCAP_us $green
 set -Ux LSCOLORS gxfxbEaEBxxEhEhBaDaCaD
 
 thefuck --alias | source
+
+source ~/.config/fish/spatial_secrets.fish
+
+
+# Use forgit diff on stash enter
+set -x FORGIT_STASH_ENTER_COMMAND 'echo {} | cut -d: -f1 | xargs -I % git forgit diff %^1 %'
+
+# Pop stash on alt-enter
+set -x FORGIT_STASH_POP_COMMAND 'echo {} | cut -d: -f1 | xargs -I % git stash pop %'
+
+# Drop stash on alt-backspace
+set -x FORGIT_STASH_DROP_COMMAND 'echo {} | cut -d: -f1 | xargs -I % git stash drop %'
+
+set -x FORGIT_STASH_FZF_OPTS "
+	--bind='enter:execute($FORGIT_STASH_ENTER_COMMAND)'
+	--bind='ctrl-a:execute($FORGIT_STASH_POP_COMMAND)+accept'
+	--bind='ctrl-x:execute($FORGIT_STASH_DROP_COMMAND)+reload(git stash list)'
+	--prompt='[ENTER] show   [CTRL+a] pop   [CTRL+x] drop > '
+"

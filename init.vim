@@ -39,14 +39,14 @@ call vundle#begin()
 
 " Plugins
 Plugin 'VundleVim/Vundle.vim' " Bundler
-Plugin 'ctrlpvim/ctrlp.vim' " fuzzy search file finding
 Plugin 'neoclide/coc.nvim'
-Plugin 'jremmen/vim-ripgrep' " recursive grep
 Plugin 'pboettch/vim-cmake-syntax'  " syntax highlighting for cmake
 Plugin 'vim-airline/vim-airline'
 Plugin 'ayu-theme/ayu-vim'
 Bundle 'edkolev/tmuxline.vim'
 Plugin 'dag/vim-fish' " syntax highlighting for fish
+Plugin 'tpope/vim-fugitive'
+Plugin 'elzr/vim-json'
 
 " End configuration, makes the plugins available
 call vundle#end()
@@ -107,7 +107,7 @@ inoremap <expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<S-Tab>"
 
 " disable search of certain folders
 let g:ctrlp_custom_ignore = {
-    \ 'dir': '\v[\/](build|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info|cmake-build.+|build_xcode|bin|objs)$',
+    \ 'dir': '\v[\/](build|log|__pycache__|\.git|\.hg|\.svn|.+\.egg-info|cmake-build.+|build_xcode|bin|objs|target)$',
     \ 'file': '\v\.(lst|so|swp|zip|gz|tar|png|jpg|pyc|o|a|pc|jam|la)$'
     \ }
 
@@ -184,9 +184,6 @@ let mapleader=" "
 
 " Fast saving
 nmap <leader>w :w!<cr>
-
-" Fast search
-nmap <leader>r :Rg
 
 " Lazy macro repeat
 nmap <leader>m @@
@@ -462,3 +459,31 @@ function! ClangFormatFunction()
    :e
 endfunction
 command Format   call ClangFormatFunction()
+
+" Trying telescope
+Plugin 'nvim-lua/plenary.nvim' " required by telescope
+Plugin 'nvim-telescope/telescope.nvim'
+
+nnoremap <C-p> <cmd>Telescope find_files<cr>
+nnoremap <leader>f <cmd>Telescope live_grep<cr>
+"nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+lua << EOF
+
+require('telescope').setup{
+  defaults = {
+      layout_config = {
+          -- horizontal = { width = 0.9, preview_width = 0.6 }
+          -- other layout configuration here
+        },
+    mappings = {
+      i = {
+            ["<C-j>"] = "move_selection_next",
+            ["<C-k>"] = "move_selection_previous",
+      }
+      
+    }
+  }
+}
+EOF
