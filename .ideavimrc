@@ -240,7 +240,21 @@ nnoremap <leader>e :action ShowErrorDescription<CR>
 
 nnoremap <leader>s :action RenameElement<CR>
 
-nnoremap <leader>x :action CIDR.Lang.IntroduceVariable<CR>
-nnoremap <leader>cx :action copilot.disableCopilot<CR>
-nnoremap <leader>xc :action copilot.enableCopilot<CR>
+nnoremap <leader>v :action CIDR.Lang.IntroduceVariable<CR>
+
+nnoremap <leader>c :call CopilotToggle()<cr>
+
+let g:copilotEnabled=0
+function! CopilotToggle()
+    if g:copilotEnabled
+        let g:copilotEnabled=0
+        :action copilot.disableCopilot
+    else
+        let g:copilotEnabled=1
+        :action copilot.enableCopilot
+    endif
+endfunction
+
+"nnoremap <leader>cx :action copilot.disableCopilot<CR>
+"nnoremap <leader>xc :action copilot.enableCopilot<CR>
 

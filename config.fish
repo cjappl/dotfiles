@@ -57,6 +57,8 @@ fish_add_path $HOME/.cargo/bin/
 fish_add_path $HOME/code/splbootstrap/bin/
 fish_add_path $HOME/go/bin/
 
+set PATH /Applications/CMake.app/Contents/bin/ $PATH 
+
 set -x HOMEBREW_NO_ANALYTICS 1
 
 #######################################################################
@@ -79,13 +81,23 @@ function rgpy  --wraps "rg"
     rg --type py $argv 
 end
 
+function fdi --wraps "fd"
+    fd --no-ignore $argv
+end
+
+function rgi --wraps "rg"
+    rg --no-ignore $argv
+end
+
 function getparentbranchname
     set current_branch_name (git rev-parse --abbrev-ref HEAD)
     set parent_branch_name (git show-branch -a 2>/dev/null \
       | grep '\*' \
       | grep -v $current_branch_name \
       | head -n1 \
-      | perl -ple 's/\[[A-Za-z]+-\d+\][^\]]+$//; s/^.*\[([^~^\]]+).*$/$1/')
+      | grep -o '\[[^]]*\]' \
+      | head -1 \
+      | tr -d '[]')
 
     echo $parent_branch_name
 end
@@ -115,15 +127,12 @@ end
 alias gsc "git switch --create"
 
 
-set FLOCK 122333
+set MYFLOCKID 122333
 
-function releaseClientCommand 
-    set_color brgreen
-    echo $SPATIAL/build/bin/splclient -f $FLOCK $argv
-    set_color normal
+set -x SPACEID 0
 
-    #$SPATIAL/build/bin/splclient -f $FLOCK $argv 2>&1 | grep -E "got network instruction response|CRIT|WARN" | grep -v "permissions" | jq '{message}'
-    $SPATIAL/build/bin/splclient -f $FLOCK $argv 2>&1 | jq 'select(.eventname == "instruction.responserecieved") | {timestamp, eventname, status}'
+function releaseClientCommand
+    $SPATIAL/build/bin/splclient -f $MYFLOCKID -s $SPACEID $argv
 end
 
 function releaseClientLoadsceneStart -a scenename
