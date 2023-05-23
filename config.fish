@@ -43,12 +43,6 @@ set SPATIAL ~/code/spatial
 set SPATIAL_API ~/code/spatial-openapi
 set ENV staging 
 
-set PERFORCE ~/Perforce
-
-set AU ~/Library/Audio/Plug-Ins/Components
-set VST ~/Library/Audio/Plug-Ins/VST3
-set AAX "/Library/Application Support/Avid/Audio/Plug-Ins/"
-
 set -x RIPGREP_CONFIG_PATH (echo $HOME'/.ripgreprc')
 
 set -x EDITOR (which nvim)
@@ -61,13 +55,11 @@ set PATH /Applications/CMake.app/Contents/bin/ $PATH
 
 set -x HOMEBREW_NO_ANALYTICS 1
 
+set TOOLROOT_PI /Volumes/xtool-build-env/crosstools_workspace/armv8-rpi3-linux-gnueabihf/
+
 #######################################################################
 # => Aliases and functions
 #######################################################################
-
-function rh -a pattern  --wraps "rg"
-    rg -g "!tps/*" -g "!windows/*" -g "!bin/*" -g "!lib/*" -g "!build/*" -g "!*.xcodeproj" $pattern
-end
 
 function rgcmake --wraps "rg"
     rg --type cmake $argv
@@ -104,13 +96,13 @@ end
 
 # Open the Pull Request URL for your current directory's branch, merges by default against the current branch's parent 
 function openpr
-  set github_url (git remote -v | awk '/fetch/{print $2}' | sed -Ee 's#(git@|git://)#https://#' -e 's@com:@com/@' -e 's%\.git$%%' | awk '/github/')
-  set current_branch_name (git rev-parse --abbrev-ref HEAD)
-  # https://gist.github.com/joechrysler/6073741
-  set parent_branch_name (getparentbranchname)
-  # https://github.com/spatiallabs/spatial/compare/release-8.4...merge-PLAT-1234?expand=1
-  set pr_url $github_url[1]"/compare/$parent_branch_name...$current_branch_name?expand=1"
-  open $pr_url
+    set github_url (git remote -v | grep 'origin.*fetch' | awk '{print $2}' | sed -Ee 's#(git@|git://)#https://#' -e 's@com:@com/@' -e 's%\.git$%%' | awk '/github/')
+    set current_branch_name (git rev-parse --abbrev-ref HEAD)
+    # https://gist.github.com/joechrysler/6073741
+    set parent_branch_name (getparentbranchname)
+    # https://github.com/spatiallabs/spatial/compare/release-8.4...merge-PLAT-1234?expand=1
+    set pr_url $github_url"/compare/$parent_branch_name...$current_branch_name?expand=1"
+    open $pr_url
 end
 
 # Run git push and then immediately open the Pull Request URL
@@ -140,7 +132,16 @@ function releaseClientLoadsceneStart -a scenename
 end
 
 function runDaemon
+    ulimit -n 20000
     $SPATIAL/build/bin/spldaemon $SPATIAL/app/daemon.cfg ~/daemoncfgs/capple.cfg
+end
+
+function killDaemon
+    cat (echo "stop" | psub) - | nc localhost 1138
+end
+
+function tailDaemon
+    tail -f $SPATIAL/spldaemon.log
 end
 
 function merge_to_release -a VERSION COMMIT
@@ -281,7 +282,6 @@ abbr -a !! --position anywhere --function last_history_item
 # => Fzf 
 #######################################################################
 
-#set -x FORGIT_FZF_DEFAULT_OPTS "$FORGIT_FZF_DEFAULT_OPTS --layout=reverse-list --preview-window='down:80%' --height='90%'"
 set -x FORGIT_FZF_DEFAULT_OPTS "$FORGIT_FZF_DEFAULT_OPTS --layout=reverse-list"
 source $PERSONAL/forgit/conf.d/forgit.plugin.fish
 
@@ -384,3 +384,6 @@ set -x FORGIT_STASH_FZF_OPTS "
 	--bind='ctrl-x:execute($FORGIT_STASH_DROP_COMMAND)+reload(git stash list)'
 	--prompt='[ENTER] show   [CTRL+a] pop   [CTRL+x] drop > '
 "
+
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"

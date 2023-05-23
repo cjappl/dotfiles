@@ -3,5 +3,8 @@ build/*
 cmake-build*/*
 .cache/clangd/*
 Testing/*
+.python-version
+
+allure/*
 
 .clang-format

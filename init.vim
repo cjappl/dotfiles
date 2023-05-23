@@ -47,6 +47,13 @@ Bundle 'edkolev/tmuxline.vim'
 Plugin 'dag/vim-fish' " syntax highlighting for fish
 Plugin 'tpope/vim-fugitive'
 Plugin 'elzr/vim-json'
+Plugin 'github/copilot.vim'
+
+" telescope
+Plugin 'nvim-lua/plenary.nvim' " required by telescope
+Plugin 'nvim-treesitter/nvim-treesitter'
+Plugin 'nvim-telescope/telescope.nvim'
+
 
 " End configuration, makes the plugins available
 call vundle#end()
@@ -100,6 +107,14 @@ let g:coc_disable_transparent_cursor = 1
 
 inoremap <expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : "\<Tab>"
 inoremap <expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<S-Tab>"
+
+
+" When the <Enter> key is pressed while the popup menu is visible, it only
+" hides the menu. Use this mapping to close the menu and also start a new
+" line.
+"inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
+"inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => ctrlp
@@ -460,14 +475,7 @@ function! ClangFormatFunction()
 endfunction
 command Format   call ClangFormatFunction()
 
-" Trying telescope
-Plugin 'nvim-lua/plenary.nvim' " required by telescope
-Plugin 'nvim-telescope/telescope.nvim'
 
-nnoremap <C-p> <cmd>Telescope find_files<cr>
-nnoremap <leader>f <cmd>Telescope live_grep<cr>
-"nnoremap <leader>fb <cmd>Telescope buffers<cr>
-nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
 lua << EOF
 
@@ -487,3 +495,40 @@ require('telescope').setup{
   }
 }
 EOF
+
+nnoremap <leader>f <cmd>lua require("telescope.builtin").live_grep({ additional_args = function() return { "--trim" } end })<cr>
+
+nnoremap <C-p> <cmd>Telescope find_files<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Copilot 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+imap <silent><script><expr> <S-Tab> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
+nmap <silent> <C-x> <Plug>(copilot-dismiss)
+nnoremap <silent> <leader>c :call CopilotToggle()<CR>
+
+let g:copilot_enabled = v:true 
+function! CopilotToggle()
+    if g:copilot_enabled == v:true
+        let g:copilot_enabled = v:false 
+        :Copilot disable
+    else
+        let g:copilot_enabled = v:true 
+        :Copilot enable
+    endif
+endfunction
+
+
+"nmap <silent> <A-n> <Plug>(copilot-next)
+"nmap <silent> <A-p> <Plug>(copilot-prev)
+"nmap <silent> <leader>cc <Plug>(copilot-suggest)
+
+
+"""""""""" VERTICAL UP/DOWN """"
+
+xnoremap <leader>cd /\%<C-R>=virtcol(".")<CR>v\S<CR>
+xnoremap <leader>cu ?\%<C-R>=virtcol(".")<CR>v\S<CR>
