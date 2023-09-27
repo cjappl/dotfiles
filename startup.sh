@@ -26,8 +26,8 @@ ln $dotfiles_dir/.tmux.conf ~/.tmux.conf > /dev/null
 ln $dotfiles_dir/.astylerc ~/.astylerc > /dev/null
 ln $dotfiles_dir/.ripgreprc ~/.ripgreprc > /dev/null
 ln $dotfiles_dir/.xvimrc ~/.xvimrc > /dev/null
-ln $dotfiles_dir/gitconfig ~/.gitconfig > /dev/null
-ln $dotfiles_dir/gitignore ~/.gitignore > /dev/null
+ln $dotfiles_dir/.gitconfig ~/.gitconfig > /dev/null
+ln $dotfiles_dir/.gitignore ~/.gitignore > /dev/null
 ln $dotfiles_dir/.ideavimrc ~/.ideavimrc > /dev/null
 
 pip3 install pynvim virtualfish pdbpp ipython flake8 jupyter --user

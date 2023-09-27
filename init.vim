@@ -27,36 +27,33 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vundle
+" => vim-plug
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set shell=bash
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin()
 
 " Plugins
-Plugin 'VundleVim/Vundle.vim' " Bundler
-Plugin 'neoclide/coc.nvim'
-Plugin 'pboettch/vim-cmake-syntax'  " syntax highlighting for cmake
-Plugin 'vim-airline/vim-airline'
-Plugin 'ayu-theme/ayu-vim'
-Bundle 'edkolev/tmuxline.vim'
-Plugin 'dag/vim-fish' " syntax highlighting for fish
-Plugin 'tpope/vim-fugitive'
-Plugin 'elzr/vim-json'
-Plugin 'github/copilot.vim'
+Plug 'VundleVim/Vundle.vim' " Bundler
+Plug 'neoclide/coc.nvim'
+Plug 'pboettch/vim-cmake-syntax', {'for': 'cmake'} 
+Plug 'vim-airline/vim-airline'
+Plug 'ayu-theme/ayu-vim'
+Plug 'edkolev/tmuxline.vim'
+Plug 'dag/vim-fish', {'for': 'fish'}
+Plug 'tpope/vim-fugitive'
+Plug 'elzr/vim-json'
+Plug 'github/copilot.vim'
 
 " telescope
-Plugin 'nvim-lua/plenary.nvim' " required by telescope
-Plugin 'nvim-treesitter/nvim-treesitter'
-Plugin 'nvim-telescope/telescope.nvim'
-
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-telescope/telescope.nvim'
 
 " End configuration, makes the plugins available
-call vundle#end()
+call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set peekaboo window so it's a bit bigger

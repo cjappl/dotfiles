@@ -1,28 +1,47 @@
 [user]
-	name = Christopher Apple
-	email = christopher.j.apple@gmail.com
-[core]
-	excludesfile = /Users/cjappl/.gitignore_global
-	autocrlf = false
-	safecrlf = true
-	editor = nvim
-    pager = diff-so-fancy | less --tabs 4 -RFX
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[difftool]
-    cmd = nvim -d $LOCAL $REMOTE
-[mergetool "sourcetree"]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
-[merge]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-[alias]
-    hist = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
-    stash-all = stash save --include-untracked
-[commit]
-	template = /Users/cjappl/.stCommitMsg
+	name = Chris Apple
+	email = 14171107+cjappl@users.noreply.github.com
 [credential]
 	helper = osxkeychain
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+[core]
+	autocrlf = input
+	excludesfile = ~/.gitignore
+    pager = bash -c 'delta'
+	whitespace = trailing-space
 [push]
 	default = current
+	autoSetupRemote = true
+[difftool]
+    prompt = true
+    colorMoved = default
+[diff]
+    tool = nvimdiff
+[difftool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+[alias]
+    edit-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; nvim `f`"
+    add-unmerged = "!f() { git diff --name-status --diff-filter=U | cut -f2 ; }; git add `f`"
+    uncommit = reset --soft HEAD^
+    oneline = "log --oneline"
+[merge]
+	conflictstyle = diff3
+[log]
+	date = "local"
+[interactive]
+    diffFilter = delta --color-only
+[add.interactive]
+    useBuiltin = false # required for git 2.37.0
+[delta]
+    navigate = true    # use n and N to move between diff sections
+    #side-by-side = true # side by side instead of interleaved
+[init]
+	defaultBranch = main
+[blame]
+	ignoreRevsFile = .git-blame-ignore-revs
+[advice]
+	macheteEditorSelection = false

@@ -57,6 +57,10 @@ set -x HOMEBREW_NO_ANALYTICS 1
 
 set TOOLROOT_PI /Volumes/xtool-build-env/crosstools_workspace/armv8-rpi3-linux-gnueabihf/
 
+set -x CMAKE_CXX_COMPILER_LAUNCHER ccache
+#set -x CCACHE_BASEDIR $SPATIAL
+set -x CCACHE_MAXSIZE 10G
+
 #######################################################################
 # => Aliases and functions
 #######################################################################
@@ -118,122 +122,11 @@ end
 
 alias gsc "git switch --create"
 
-
-set MYFLOCKID 122333
-
-set -x SPACEID 0
-
-function releaseClientCommand
-    $SPATIAL/build/bin/splclient -f $MYFLOCKID -s $SPACEID $argv
-end
-
-function releaseClientLoadsceneStart -a scenename
-    releaseClientCommand loadscene $scenename "" "" "" "" true 
-end
-
-function runDaemon
-    ulimit -n 20000
-    $SPATIAL/build/bin/spldaemon $SPATIAL/app/daemon.cfg ~/daemoncfgs/capple.cfg
-end
-
-function killDaemon
-    cat (echo "stop" | psub) - | nc localhost 1138
-end
-
-function tailDaemon
-    tail -f $SPATIAL/spldaemon.log
-end
-
-function merge_to_release -a VERSION COMMIT
-    cd $SPATIAL
-    git checkout release-$VERSION-publish
-    and git pull
-
-    if test $status -ne 0
-        return $status
-    end
-
-    set JIRA (git log --oneline $COMMIT | head -1 | string match --regex --groups-only "\[(PLAT-.*)\]")
-
-    if test -n "$JIRA"
-        set MERGE_BRANCH = "merge-$JIRA-$VERSION"
-    else
-        echo "Jira ticket not found in commit, faling back to SHA"
-        set MERGE_BRANCH = "merge-$COMMIT-$VERSION"
-    end
-
-    git switch --create $MERGE_BRANCH
-    and git cherry-pick $COMMIT
-    and gpr
-    and git checkout main
-    git branch --delete $MERGE_BRANCH
-
-    return $status
-end
-
-function create_release_branch -a OLD_VERSION NEW_VERSION
-    cd $SPATIAL
-    git checkout main
-    and git pull
-
-    # sanity check you didn't mess it up
-    set FOUND_OLD_VERSION ($SPATIAL/scripts/extract-runtime-version.sh)
-    if not string match -q "$FOUND_OLD_VERSION" "$OLD_VERSION"
-        echo "Specified old version ($OLD_VERSION) does not match found old version ($FOUND_OLD_VERSION)" 2>&1
-        return 1
-    end
-
-    set USER_RESPONSE = ""
-
-    set NEW_RELEASE_BRANCH "release-$NEW_VERSION-publish"
-    while not string match -q "$USER_RESPONSE" "y"; and not string match -q "$USER_RESPONSE" "n"
-        read --prompt-str "Create new release branch $NEW_RELEASE_BRANCH? [y/n] > " USER_RESPONSE
-
-        if test $status -ne 0
-            return $status
-        end
-    end
-
-    if string match -q "$USER_RESPONSE" "n"
-        return 0
-    end
-
-    echo "Please increase splversion to match the provided new version"
-    sleep 1 
-    nvim $SPATIAL/include/splversions.h +16
-    if test $status -ne 0
-        return $status
-    end
-
-    set FOUND_NEW_VERSION ($SPATIAL/scripts/extract-runtime-version.sh)
-    if not string match -q "$FOUND_NEW_VERSION" "$NEW_VERSION"
-        echo "Specified new version ($NEW_VERSION) does not match found new version ($FOUND_NEW_VERSION)" 2>&1
-        return 1
-    end
-
-    git switch --create $NEW_RELEASE_BRANCH
-    and git push
-
-    if test $status -ne 0
-        return $status
-    end
-
-    set BUMP_BRANCH "bumpmain-$NEW_VERSION"
-    git checkout main
-    and git switch --create "$BUMP_BRANCH"
-    and git add $SPATIAL/include/splversions.h
-    and git commit -m "BUMP MAIN VERSION - $NEW_VERSION"
-    and gpr
-    and git branch --delete "$BUMP_BRANCH"
-end
-
 # finding my ip address
 alias ip_addr "ifconfig en0 inet | grep inet"
 
 #setting vim to start nvim
 alias vim nvim
-
-#eval (python3 -m virtualfish) 
 
 # clear au cache
 alias clear_au_cache "rm ~/Library/Caches/AudioUnitCache/com.apple.audiounits.cache && rm ~/Library/Preferences/com.apple.audio.InfoHelper.plist"
