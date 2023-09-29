@@ -1,0 +1,4 @@
+{
+    "suggest.noselect": true,
+    "clangd.path": "/usr/local/clangd_15.0.6/bin/clangd"
+}
