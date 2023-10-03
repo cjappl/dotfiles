@@ -47,10 +47,6 @@ set -x RIPGREP_CONFIG_PATH (echo $HOME'/.ripgreprc')
 
 set -x EDITOR (which nvim)
 
-fish_add_path $HOME/.cargo/bin/
-fish_add_path $HOME/code/splbootstrap/bin/
-fish_add_path $HOME/go/bin/
-
 set PATH /Applications/CMake.app/Contents/bin/ $PATH 
 
 set -x HOMEBREW_NO_ANALYTICS 1
@@ -135,7 +131,7 @@ alias ls lsd
 
 alias tabonly "tmux kill-window -a && tmux movew -r"
 
-[ -f /opt/homebrew/share/autojump/autojump.fish ]; and source /opt/homebrew/share/autojump/autojump.fish
+[ -f /usr/local/share/autojump/autojump.fish ]; and source /usr/local/share/autojump/autojump.fish
 
 #######################################################################
 # => Utility functions
@@ -176,7 +172,7 @@ abbr -a !! --position anywhere --function last_history_item
 #######################################################################
 
 set -x FORGIT_FZF_DEFAULT_OPTS "$FORGIT_FZF_DEFAULT_OPTS --layout=reverse-list"
-source $PERSONAL/forgit/conf.d/forgit.plugin.fish
+source $HOME/code/forgit/conf.d/forgit.plugin.fish
 
 set -x FZF_DEFAULT_COMMAND "fd --color=always --exclude .git . \$dir"
 set -x FZF_CTRL_T_COMMAND $FZF_DEFAULT_COMMAND
@@ -227,14 +223,13 @@ set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
 set fish_greeting ""
 
 fish_vi_key_bindings
-eval "$(/opt/homebrew/bin/brew shellenv)"
 
 ######## # Colors for less manpage
-set default $(tput sgr0)
-set red $(tput setaf 1)
-set green $(tput setaf 2)
-set purple $(tput setaf 5)
-set orange $(tput setaf 9)
+set default (tput sgr0)
+set red (tput setaf 1)
+set green (tput setaf 2)
+set purple (tput setaf 5)
+set orange (tput setaf 9)
 
 
 # Less colors for man pages
@@ -259,8 +254,6 @@ set -Ux LSCOLORS gxfxbEaEBxxEhEhBaDaCaD
 
 thefuck --alias | source
 
-source ~/.config/fish/spatial_secrets.fish
-
 
 # Use forgit diff on stash enter
 set -x FORGIT_STASH_ENTER_COMMAND 'echo {} | cut -d: -f1 | xargs -I % git forgit diff %^1 %'
@@ -275,8 +268,4 @@ set -x FORGIT_STASH_FZF_OPTS "
 	--bind='enter:execute($FORGIT_STASH_ENTER_COMMAND)'
 	--bind='ctrl-a:execute($FORGIT_STASH_POP_COMMAND)+accept'
 	--bind='ctrl-x:execute($FORGIT_STASH_DROP_COMMAND)+reload(git stash list)'
-	--prompt='[ENTER] show   [CTRL+a] pop   [CTRL+x] drop > '
-"
-
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+	--prompt='[ENTER] show   [CTRL+a] pop   [CTRL+x] drop > '"

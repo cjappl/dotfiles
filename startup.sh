@@ -4,10 +4,13 @@ set -e
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' > ~/.zprofile
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' > $HOME/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
  
 brew bundle
+
+brew tap homebrew/cask-fonts
+brew install font-hack-nerd-font
 
 # run install step of fzf for command purposes
 $(brew --prefix)/opt/fzf/install
@@ -16,40 +19,42 @@ echo "linking all config files"
 
 dotfiles_dir=$(pwd)
 
-mkdir -p ~/.config/fish > /dev/null
-ln $dotfiles_dir/config.fish ~/.config/fish/ > /dev/null
+mkdir -p $HOME/.config/fish > /dev/null
+ln $dotfiles_dir/config.fish $HOME/.config/fish/ > /dev/null
 
-mkdir -p ~/.config/nvim > /dev/null
-ln $dotfiles_dir/init.vim ~/.config/nvim/ > /dev/null
+mkdir -p $HOME/.config/nvim > /dev/null
+ln $dotfiles_dir/init.vim $HOME/.config/nvim/ > /dev/null
 
-ln $dotfiles_dir/.tmux.conf ~/.tmux.conf > /dev/null
-ln $dotfiles_dir/.astylerc ~/.astylerc > /dev/null
-ln $dotfiles_dir/.ripgreprc ~/.ripgreprc > /dev/null
-ln $dotfiles_dir/.xvimrc ~/.xvimrc > /dev/null
-ln $dotfiles_dir/.gitconfig ~/.gitconfig > /dev/null
-ln $dotfiles_dir/.gitignore ~/.gitignore > /dev/null
-ln $dotfiles_dir/.ideavimrc ~/.ideavimrc > /dev/null
+ln $dotfiles_dir/.tmux.conf $HOME/.tmux.conf > /dev/null
+ln $dotfiles_dir/.astylerc $HOME/.astylerc > /dev/null
+ln $dotfiles_dir/.ripgreprc $HOME/.ripgreprc > /dev/null
+ln $dotfiles_dir/.xvimrc $HOME/.xvimrc > /dev/null
+ln $dotfiles_dir/.gitconfig $HOME/.gitconfig > /dev/null
+ln $dotfiles_dir/.gitignore $HOME/.gitignore > /dev/null
+ln $dotfiles_dir/.ideavimrc $HOME/.ideavimrc > /dev/null
 
 pip3 install pynvim virtualfish pdbpp ipython flake8 jupyter --user
 
 # Install vundle and all git plugins
-git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-nvim +PluginInstall +qall
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+                                                           https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+nvim +PlugInstall +qall
 
-yarn install --cwd ~/.vim/bundle/coc.nvim
+THIS_DIR=$(pwd)
+cd $HOME/.local/share/nvim/plugged/coc.nvim
+npm ci
+cd $THIS_DIR
 nvim +CocInstall coc-clangd +qall
 nvim +CocInstall coc-pyright +qall
 
-git clone https://github.com/powerline/fonts ~/Downloads/fonts
-chmod +x ~/Downloads/fonts/install.sh
-bash -c "~/Downloads/fonts/install.sh"
+patch -p1 -d $HOME/.local/share/nvim/plugged/ayu-vim < $desktop/dark_background.ayu.vim.diff
 
 # Remove all icons from desktop
 defaults write com.apple.finder CreateDesktop false
 killall Finder
 
-mkdir -p ~/code/personal/
-git clone https://github.com/wfxr/forgit.git ~/code/personal/forgit
+mkdir -p $HOME/code/
+git clone https://github.com/wfxr/forgit.git $HOME/code/forgit
 
 # set fish as your shell
 which fish | sudo tee -a /etc/shells
@@ -59,6 +64,8 @@ echo "Make sure to change your startup command in iTerm preferences->Profiles->G
 echo "tmux attach -t init; or tmux new -s init" 
 echo "tmux attach -t init || tmux new -s init"
 echo ""
-echo "set fonts for powerline in Iterm Preferences->Profiles->Text->Non-ASCII Font ProFont for Powerline"
+echo "set fonts for powerline in Iterm Preferences->Profiles->Text->Non-ASCII Font->Hacker Nerd Font Mono"
 echo ""
 echo "Allow left alt to scroll in forgit: Iterm Preferences->Profile->Keys->Below the window->Left Option Key = Esc+"
+echo ""
+echo "Alternatively, try to load the existing profile in the existing json file"
