@@ -28,6 +28,10 @@
 #
 #######################################################################
 
+set BREW (which brew)
+
+eval ($BREW shellenv)
+
 #######################################################################
 # => Environment variables
 #######################################################################
@@ -131,7 +135,7 @@ alias ls lsd
 
 alias tabonly "tmux kill-window -a && tmux movew -r"
 
-[ -f /usr/local/share/autojump/autojump.fish ]; and source /usr/local/share/autojump/autojump.fish
+[ -f $HOMEBREW_PREFIX/share/autojump/autojump.fish ]; and source $HOMEBREW_PREFIX/share/autojump/autojump.fish 
 
 #######################################################################
 # => Utility functions
@@ -208,16 +212,31 @@ function fish_mode_prompt
       set_color --bold red
       echo '[?]'
   end
-  set_color white 
-  echo '|'
-
-  set_color ED7440
-  echo (date +%H:%M)
 
   set_color white 
-  echo '|'
+  echo ' '
   set_color normal
 end
+
+#set __fish_git_prompt_show_informative_status true
+set __fish_git_prompt_showdirtystate true
+set __fish_git_prompt_showuntrackedfiles true
+
+function fish_prompt -d "Write out the prompt"
+    # This shows up as /home/user/ (master *)>, with the directory colored
+    printf '%s%s' (set_color $fish_color_cwd) (prompt_pwd)
+
+    set_color normal 
+
+    fish_git_prompt
+
+    set_color aacf9f
+    printf '> ' 
+
+    set_color normal
+
+end
+
 set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
 
 set fish_greeting ""

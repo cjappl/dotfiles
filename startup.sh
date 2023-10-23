@@ -33,11 +33,10 @@ ln $dotfiles_dir/.gitconfig $HOME/.gitconfig > /dev/null
 ln $dotfiles_dir/.gitignore $HOME/.gitignore > /dev/null
 ln $dotfiles_dir/.ideavimrc $HOME/.ideavimrc > /dev/null
 
+git config --global core.excludesfile ~/.gitignore
+
 pip3 install pynvim virtualfish pdbpp ipython flake8 jupyter --user
 
-# Install vundle and all git plugins
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-                                                           https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 nvim +PlugInstall +qall
 
 THIS_DIR=$(pwd)
@@ -47,7 +46,7 @@ cd $THIS_DIR
 nvim +CocInstall coc-clangd +qall
 nvim +CocInstall coc-pyright +qall
 
-patch -p1 -d $HOME/.local/share/nvim/plugged/ayu-vim < $desktop/dark_background.ayu.vim.diff
+patch -p1 -d $HOME/.local/share/nvim/plugged/ayu-vim < $dotfiles_dir/dark_background.ayu.vim.diff
 
 # Remove all icons from desktop
 defaults write com.apple.finder CreateDesktop false
