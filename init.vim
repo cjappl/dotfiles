@@ -36,21 +36,21 @@ filetype off                  " required
 call plug#begin()
 
 " Plugins
-Plug 'VundleVim/Vundle.vim' " Bundler
+Plug 'ayu-theme/ayu-vim'
+Plug 'dag/vim-fish', {'for': 'fish'}
+Plug 'edkolev/tmuxline.vim'
+Plug 'elzr/vim-json', {'for': 'json'}
+Plug 'github/copilot.vim'
 Plug 'neoclide/coc.nvim'
 Plug 'pboettch/vim-cmake-syntax', {'for': 'cmake'} 
+Plug 'tpope/vim-fugitive', {'on': 'Git'}
 Plug 'vim-airline/vim-airline'
-Plug 'ayu-theme/ayu-vim'
-Plug 'edkolev/tmuxline.vim'
-Plug 'dag/vim-fish', {'for': 'fish'}
-Plug 'tpope/vim-fugitive'
-Plug 'elzr/vim-json'
-Plug 'github/copilot.vim'
 
 " telescope
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 
 " End configuration, makes the plugins available
 call plug#end()
@@ -302,10 +302,8 @@ set smarttab
 set shiftwidth=4
 set tabstop=4
 
-" Linebreak on 500 characters
-" TODO: Maybe remove?
-"set lbr
-"set tw=10
+" temporary for llvm
+set tabstop=2 softtabstop=2 shiftwidth=2
 
 set ai "Auto indent
 set wrap "Wrap lines
@@ -477,20 +475,33 @@ command Format   call ClangFormatFunction()
 lua << EOF
 
 require('telescope').setup{
-  defaults = {
-      layout_config = {
-          -- horizontal = { width = 0.9, preview_width = 0.6 }
-          -- other layout configuration here
+    defaults = {
+        find_command = {'fd', '--type', 'f', '--hidden', '--exclude', '.git'},
+        file_ignore_patterns = {"node_modules", ".git", "*build/**"},
+        layout_config = {
+        -- horizontal = { width = 0.9, preview_width = 0.6 }
+        -- other layout configuration here
         },
-    mappings = {
-      i = {
-            ["<C-j>"] = "move_selection_next",
-            ["<C-k>"] = "move_selection_previous",
-      }
-      
+        mappings = {
+            i = {
+                ["<C-j>"] = "move_selection_next",
+                ["<C-k>"] = "move_selection_previous",
+            }
+        },
+        extensions = {
+            fzf = {
+              fuzzy = true,                    -- false will only do exact matching
+              override_generic_sorter = true,  -- override the generic sorter
+              override_file_sorter = true,     -- override the file sorter
+            }
+        }
     }
-  }
 }
+
+-- To get fzf loaded and working with telescope, you need to call
+-- load_extension, somewhere after setup function:
+require('telescope').load_extension('fzf')
+
 EOF
 
 nnoremap <leader>f <cmd>lua require("telescope.builtin").live_grep({ additional_args = function() return { "--trim" } end })<cr>
@@ -529,3 +540,12 @@ endfunction
 
 xnoremap <leader>cd /\%<C-R>=virtcol(".")<CR>v\S<CR>
 xnoremap <leader>cu ?\%<C-R>=virtcol(".")<CR>v\S<CR>
+
+
+function! ShowCurrentBufferPath()
+    " Get the full path of the current buffer
+    let l:bufferPath = expand('%:p')
+
+    " Echo the path to the command line
+    echo l:bufferPath
+endfunction

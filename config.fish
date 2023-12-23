@@ -28,7 +28,7 @@
 #
 #######################################################################
 
-set BREW (which brew)
+set BREW /opt/homebrew/bin/brew
 
 eval ($BREW shellenv)
 
@@ -222,7 +222,14 @@ end
 set __fish_git_prompt_showdirtystate true
 set __fish_git_prompt_showuntrackedfiles true
 
+set -x VIRTUAL_ENV_DISABLE_PROMPT true
+
 function fish_prompt -d "Write out the prompt"
+
+    if set -q VIRTUAL_ENV
+        echo -n -s (set_color white) "(" (basename "$VIRTUAL_ENV") ")" (set_color normal) " "
+    end
+
     # This shows up as /home/user/ (master *)>, with the directory colored
     printf '%s%s' (set_color $fish_color_cwd) (prompt_pwd)
 
@@ -288,3 +295,34 @@ set -x FORGIT_STASH_FZF_OPTS "
 	--bind='ctrl-a:execute($FORGIT_STASH_POP_COMMAND)+accept'
 	--bind='ctrl-x:execute($FORGIT_STASH_DROP_COMMAND)+reload(git stash list)'
 	--prompt='[ENTER] show   [CTRL+a] pop   [CTRL+x] drop > '"
+
+
+function llvm_clang_tidy --wraps "clang-tidy" --argument-names file fix
+    set clang_tidy_cmd "$HOME/code/radsan_cjappl/build/bin/clang-tidy --config-file=$HOME/code/radsan_cjappl/llvm-project/.clang-tidy"
+    
+    if test "$fix" = "--fix"
+        set clang_tidy_cmd "$clang_tidy_cmd --fix --fix-errors"
+    end
+
+    eval $clang_tidy_cmd $file
+end
+
+function clang_tidy_diff --wraps "clang-tidy-diff.py" --description 'Run clang-tidy-diff.py on a given branch or diff file'
+    argparse 'b/branch=' 'd/diff-file=' -- $argv
+    or return
+
+    set clang_tidy_binary "$HOME/code/radsan_cjappl/build/bin/clang-tidy"
+    set config_file "$HOME/code/radsan_cjappl/llvm-project/.clang-tidy"
+    set clang_tidy_diff "$HOME/code/clang-tidy-diff.py"
+    set build_database "$HOME/code/radsan_cjappl/build/compile_commands.json"
+
+    if set -q _flag_diff_file
+        cat $_flag_diff_file | $clang_tidy_diff -p1 -clang-tidy-binary $clang_tidy_binary -config $config_file -checks="-clang-diagnostic-*" -path $build_database
+    else
+        git -C $HOME/code/radsan_cjappl/llvm-project diff $_flag_branch | $clang_tidy_diff -p1 -clang-tidy-binary $clang_tidy_binary -config $config_file -checks="-clang-diagnostic-*" -path $build_database
+    end
+end
+
+function radsan_test
+    make -C ~/code/radsan_cjappl/ test
+end
