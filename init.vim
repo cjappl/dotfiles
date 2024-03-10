@@ -45,12 +45,15 @@ Plug 'neoclide/coc.nvim'
 Plug 'pboettch/vim-cmake-syntax', {'for': 'cmake'} 
 Plug 'tpope/vim-fugitive', {'on': 'Git'}
 Plug 'vim-airline/vim-airline'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+
+Plug 'ibhagwan/fzf-lua'
 
 " telescope
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-treesitter/nvim-treesitter'
-Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+"Plug 'nvim-lua/plenary.nvim'
+"Plug 'nvim-treesitter/nvim-treesitter'
+"Plug 'nvim-telescope/telescope.nvim'
+"Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 
 " End configuration, makes the plugins available
 call plug#end()
@@ -299,8 +302,10 @@ set expandtab
 set smarttab
 
 " 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
+"let tabSize = 4
+"execute "set shiftwidth=" . tabSize
+"execute "set tabstop=" . tabSize
+"execute "set softtabstop=" . tabSize
 
 " temporary for llvm
 set tabstop=2 softtabstop=2 shiftwidth=2
@@ -474,40 +479,45 @@ command Format   call ClangFormatFunction()
 
 lua << EOF
 
-require('telescope').setup{
-    defaults = {
-        find_command = {'fd', '--type', 'f', '--hidden', '--exclude', '.git'},
-        file_ignore_patterns = {"node_modules", ".git", "*build/**"},
-        layout_config = {
-        -- horizontal = { width = 0.9, preview_width = 0.6 }
-        -- other layout configuration here
-        },
-        mappings = {
-            i = {
-                ["<C-j>"] = "move_selection_next",
-                ["<C-k>"] = "move_selection_previous",
-            }
-        },
-        extensions = {
-            fzf = {
-              fuzzy = true,                    -- false will only do exact matching
-              override_generic_sorter = true,  -- override the generic sorter
-              override_file_sorter = true,     -- override the file sorter
-            }
-        }
-    }
-}
-
--- To get fzf loaded and working with telescope, you need to call
--- load_extension, somewhere after setup function:
-require('telescope').load_extension('fzf')
+require('fzf-lua').setup({'max-perf'})
+--require('telescope').setup{
+--    defaults = {
+--        find_command = {'fd', '--type', 'f', '--hidden', '--exclude', '.git'},
+--        file_ignore_patterns = {"node_modules", ".git", "*build/**"},
+--        layout_config = {
+--        -- horizontal = { width = 0.9, preview_width = 0.6 }
+--        -- other layout configuration here
+--        },
+--        mappings = {
+--            i = {
+--                ["<C-j>"] = "move_selection_next",
+--                ["<C-k>"] = "move_selection_previous",
+--            }
+--        },
+--        extensions = {
+--            fzf = {
+--              fuzzy = true,                    -- false will only do exact matching
+--              override_generic_sorter = true,  -- override the generic sorter
+--              override_file_sorter = true,     -- override the file sorter
+--            }
+--        }
+--    }
+--}
+--
+---- To get fzf loaded and working with telescope, you need to call
+---- load_extension, somewhere after setup function:
+--require('telescope').load_extension('fzf')
 
 EOF
 
-nnoremap <leader>f <cmd>lua require("telescope.builtin").live_grep({ additional_args = function() return { "--trim" } end })<cr>
+"nnoremap <leader>f <cmd>lua require("telescope.builtin").live_grep({ additional_args = function() return { "--trim" } end })<cr>
+" nnoremap <C-p> <cmd>Telescope find_files<cr>
+" nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
-nnoremap <C-p> <cmd>Telescope find_files<cr>
-nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+nnoremap <c-P> <cmd>lua require('fzf-lua').files()<CR>
+nnoremap <leader>r <cmd> lua require('fzf-lua').live_grep_native()<CR>
+nnoremap <leader>f <cmd> lua require('fzf-lua').grep_cword()<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -524,9 +534,11 @@ function! CopilotToggle()
     if g:copilot_enabled == v:true
         let g:copilot_enabled = v:false 
         :Copilot disable
+        echo "Copilot disabled"
     else
         let g:copilot_enabled = v:true 
         :Copilot enable
+        echo "Copilot enabled"
     endif
 endfunction
 
