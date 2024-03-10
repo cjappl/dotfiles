@@ -11,7 +11,7 @@
 [core]
 	autocrlf = input
 	excludesfile = ~/.gitignore
-    pager = bash -c 'delta'
+  pager = delta --paging auto
 	whitespace = trailing-space
 [push]
 	default = current
@@ -41,7 +41,3 @@
     #side-by-side = true # side by side instead of interleaved
 [init]
 	defaultBranch = main
-[blame]
-	ignoreRevsFile = .git-blame-ignore-revs
-[advice]
-	macheteEditorSelection = false
