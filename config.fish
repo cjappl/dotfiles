@@ -347,4 +347,4 @@ function radsan_test
 end
 
 abbr -a cops "gh copilot suggest \""
-appr -a cope "gh copilot explain \""
+abbr -a cope "gh copilot explain \""

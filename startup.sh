@@ -7,13 +7,14 @@ set -e
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' > $HOME/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
  
+# Regenerate with "brew bundle dump"
 brew bundle
 
 brew tap homebrew/cask-fonts
 brew install font-hack-nerd-font
 
 # run install step of fzf for command purposes
-$(brew --prefix)/opt/fzf/install
+fzf --fish | source
 
 echo "linking all config files" 
 
