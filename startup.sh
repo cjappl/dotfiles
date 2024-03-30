@@ -53,6 +53,9 @@ patch -p1 -d $HOME/.local/share/nvim/plugged/ayu-vim < $dotfiles_dir/dark_backgr
 defaults write com.apple.finder CreateDesktop false
 killall Finder
 
+# Disable font smoothing
+defaults -currentHost write -g AppleFontSmoothing -int 0
+
 mkdir -p $HOME/code/
 git clone https://github.com/wfxr/forgit.git $HOME/code/forgit
 

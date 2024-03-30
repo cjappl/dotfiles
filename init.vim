@@ -197,9 +197,6 @@ au FocusLost,WinLeave * :silent! w
 " like <leader>w saves the current file
 let mapleader=" "
 
-" Fast saving
-nmap <leader>w :w!<cr>
-
 " Lazy macro repeat
 nmap <leader>m @@
 
