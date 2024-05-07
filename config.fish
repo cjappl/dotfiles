@@ -190,7 +190,6 @@ set -x FORGIT_FZF_DEFAULT_OPTS "$FORGIT_FZF_DEFAULT_OPTS --layout=reverse-list"
 source $HOME/code/forgit/conf.d/forgit.plugin.fish
 
 #[ -f $HOMEBREW_PREFIX/share/forgit/forgit.plugin.fish ]; and source $HOMEBREW_PREFIX/share/forgit/forgit.plugin.fish
-source $HOME/code/forgit/completions/git-forgit.fish
 
 set -x FZF_DEFAULT_COMMAND "fd --color=always --exclude .git --type file . \$dir"
 set -x FZF_CTRL_T_COMMAND $FZF_DEFAULT_COMMAND

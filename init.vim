@@ -526,7 +526,6 @@ let g:copilot_no_tab_map = v:true
 nmap <silent> <C-x> <Plug>(copilot-dismiss)
 nnoremap <silent> <leader>c :call CopilotToggle()<CR>
 
-let g:copilot_enabled = v:true 
 function! CopilotToggle()
     if g:copilot_enabled == v:true
         let g:copilot_enabled = v:false 
@@ -538,6 +537,9 @@ function! CopilotToggle()
         echo "Copilot enabled"
     endif
 endfunction
+
+" Default disable copilot
+let g:copilot_enabled = v:false
 
 
 "nmap <silent> <A-n> <Plug>(copilot-next)
