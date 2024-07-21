@@ -41,7 +41,7 @@ Plug 'dag/vim-fish', {'for': 'fish'}
 Plug 'edkolev/tmuxline.vim'
 Plug 'elzr/vim-json', {'for': 'json'}
 Plug 'github/copilot.vim'
-Plug 'neoclide/coc.nvim'
+Plug 'neoclide/coc.nvim' , {'branch': 'release'}
 Plug 'pboettch/vim-cmake-syntax', {'for': 'cmake'} 
 Plug 'tpope/vim-fugitive', {'on': 'Git'}
 Plug 'vim-airline/vim-airline'

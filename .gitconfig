@@ -1,6 +1,6 @@
 [user]
 	name = Chris Apple
-	email = 14171107+cjappl@users.noreply.github.com
+	email = cja-private@pm.me
 [credential]
 	helper = osxkeychain
 [filter "lfs"]
@@ -12,6 +12,7 @@
 	autocrlf = input
 	excludesfile = ~/.gitignore
   pager = delta --paging auto
+  #pager = delta --side-by-side --width $(expr ${COLUMNS} - 10) --wrap-max-lines unlimited
 	whitespace = trailing-space
 [push]
 	default = current
@@ -41,3 +42,5 @@
     #side-by-side = true # side by side instead of interleaved
 [init]
 	defaultBranch = main
+[rerere]
+	enabled = true

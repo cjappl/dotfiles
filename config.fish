@@ -67,6 +67,8 @@ set -x CMAKE_CXX_COMPILER_LAUNCHER ccache
 #set -x CCACHE_BASEDIR $SPATIAL
 set -x CCACHE_MAXSIZE 10G
 
+set -x OBSIDIAN "/Users/topher/Library/CloudStorage/ProtonDrive-christopher.j.apple@pm.me/Personal MBP/Obsidian/main_vault"
+
 #######################################################################
 # => Aliases and functions
 #######################################################################
@@ -317,7 +319,7 @@ set -x FORGIT_STASH_FZF_OPTS "
 
 
 function llvm_clang_tidy --wraps "clang-tidy" --argument-names file fix
-    set clang_tidy_cmd "$HOME/code/radsan_cjappl/build/bin/clang-tidy --config-file=$HOME/code/radsan_cjappl/llvm-project/.clang-tidy"
+    set clang_tidy_cmd "$HOME/code/radsan_cjappl/build/bin/clang-tidy --config-file=$HOME/code/radsan_cjappl/llvm-project/.clang-tidy -p $HOME/code/radsan_cjappl/build/"
     
     if test "$fix" = "--fix"
         set clang_tidy_cmd "$clang_tidy_cmd --fix --fix-errors"
@@ -346,5 +348,30 @@ function radsan_test
     make -C ~/code/radsan_cjappl/ test
 end
 
+function make_radsan_remote
+    ssh topher@Kates-MBP-2 'export PATH="/opt/homebrew/bin:$PATH" && make -C ~/code/radsan sync_and_build'
+end
+
+function make_radsan_ubuntu
+  set IMAGE_NAME radsan-segfault
+  set BUILD_DIR build_debug_ubuntu 
+  docker run -v ~/code/radsan_cjappl:/test_radsan $IMAGE_NAME:latest ninja -C /test_radsan/$BUILD_DIR clang check-rtsan
+end
+
 abbr -a cops "gh copilot suggest \""
 abbr -a cope "gh copilot explain \""
+
+set -gx NVM_DIR "$HOME/.nvm"
+
+
+# 2anki
+set ANKI_SERVER_DIR ~/code/2anki/server
+set ANKI_WEB_DIR $ANKI_SERVER_DIR/web
+export WORKSPACE_BASE=$ANKI_SERVER_DIR/workspace
+
+alias run_anki_server "npm run dev --prefix $ANKI_SERVER_DIR"
+alias run_anki_web "npm run dev --prefix $ANKI_WEB_DIR"
+
+function obsi_to_anki
+    /Users/topher/.virtualenvs/anki_gen/bin/python $HOME/code/Obsidian_to_Anki/obsidian_to_anki.py -R "$OBSIDIAN" --regex
+end
