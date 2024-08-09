@@ -477,33 +477,6 @@ command Format   call ClangFormatFunction()
 lua << EOF
 
 require('fzf-lua').setup({'max-perf'})
---require('telescope').setup{
---    defaults = {
---        find_command = {'fd', '--type', 'f', '--hidden', '--exclude', '.git'},
---        file_ignore_patterns = {"node_modules", ".git", "*build/**"},
---        layout_config = {
---        -- horizontal = { width = 0.9, preview_width = 0.6 }
---        -- other layout configuration here
---        },
---        mappings = {
---            i = {
---                ["<C-j>"] = "move_selection_next",
---                ["<C-k>"] = "move_selection_previous",
---            }
---        },
---        extensions = {
---            fzf = {
---              fuzzy = true,                    -- false will only do exact matching
---              override_generic_sorter = true,  -- override the generic sorter
---              override_file_sorter = true,     -- override the file sorter
---            }
---        }
---    }
---}
---
----- To get fzf loaded and working with telescope, you need to call
----- load_extension, somewhere after setup function:
---require('telescope').load_extension('fzf')
 
 EOF
 

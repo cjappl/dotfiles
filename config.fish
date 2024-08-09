@@ -67,7 +67,7 @@ set -x CMAKE_CXX_COMPILER_LAUNCHER ccache
 #set -x CCACHE_BASEDIR $SPATIAL
 set -x CCACHE_MAXSIZE 10G
 
-set -x OBSIDIAN "/Users/topher/Library/CloudStorage/ProtonDrive-christopher.j.apple@pm.me/Personal MBP/Obsidian/main_vault"
+set -x OBSIDIAN "$HOME/Obsidian/main_vault"
 
 #######################################################################
 # => Aliases and functions
@@ -348,14 +348,43 @@ function radsan_test
     make -C ~/code/radsan_cjappl/ test
 end
 
-function make_radsan_remote
-    ssh topher@Kates-MBP-2 'export PATH="/opt/homebrew/bin:$PATH" && make -C ~/code/radsan sync_and_build'
+function ,mrremote --description 'Remote rtsan build'
+  set_common_targets
+  set BUILD_DIR "/Users/topher/code/radsan/build/"
+  set LOCAL_LLVM_DIR "/Users/topher/code/radsan_cjappl/llvm-project/"
+
+  rsync -avz --delete --force --exclude "$LOCAL_LLVM_DIR/build/" --exclude "$LOCAL_LLVM_DIR/.cache" $LOCAL_LLVM_DIR topher@Kates-MBP-2:$HOME/code/radsan/llvm-project/; or exit $status;
+
+  ssh topher@Kates-MBP-2 "export PATH=\"/opt/homebrew/bin:\$PATH\" && export $RTSAN_LIT_OPTS_ENV && cmake --build $BUILD_DIR --target $RTSAN_TARGETS_LIT"; or exit $status;
+  ssh topher@Kates-MBP-2 "export PATH=\"/opt/homebrew/bin:\$PATH\" && cmake --build $BUILD_DIR --target $RTSAN_TARGETS_CLANG"; or exit $status;
 end
 
-function make_radsan_ubuntu
+
+set RTSAN_LIT_OPTS_ENV "LIT_OPTS=--filter=.*rtsan.*|attributes.ll|compatibility.ll|fsanitize.c --allow-empty-runs"
+
+function set_common_targets
+    set -g RTSAN_TARGETS_CLANG clang check-rtsan
+    set -g RTSAN_TARGETS_LIT check-llvm check-clang-codegen check-clang-driver
+end
+
+function ,mrlocal --description 'Local rtsan build'
+  set_common_targets
+  set BUILD_DIR "$HOME/code/radsan_cjappl/build/"
+  set NPROCS (math (sysctl -n hw.ncpu) - 2)
+
+  env $RTSAN_LIT_OPTS_ENV cmake --build $BUILD_DIR --target $RTSAN_TARGETS_LIT -j $NPROCS; or exit $status;
+  cmake --build $BUILD_DIR --target $RTSAN_TARGETS_CLANG -j $NPROCS; or exit $status;
+end
+
+function ,mrubuntu --description 'Ubuntu docker rtsan build'
+  set_common_targets
+
   set IMAGE_NAME radsan-segfault
-  set BUILD_DIR build_debug_ubuntu 
-  docker run -v ~/code/radsan_cjappl:/test_radsan $IMAGE_NAME:latest ninja -C /test_radsan/$BUILD_DIR clang check-rtsan
+  set BUILD_DIR "/test_radsan/build_debug_ubuntu"
+  set ENV_VARS "CCACHE_DIR=/test_radsan/ccache_ubuntu"
+  set VOLUME_MOUNT "$HOME/code/radsan_cjappl:/test_radsan"
+  docker run -it -e $ENV_VARS -v $VOLUME_MOUNT $IMAGE_NAME:latest cmake --build $BUILD_DIR --target $RTSAN_TARGETS_CLANG; or exit $status;
+  docker run -it -e $ENV_VARS -v $VOLUME_MOUNT -e $RTSAN_LIT_OPTS_ENV $IMAGE_NAME:latest cmake --build $BUILD_DIR --target $RTSAN_TARGETS_LIT; or exit $status;
 end
 
 abbr -a cops "gh copilot suggest \""
