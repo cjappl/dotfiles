@@ -317,50 +317,22 @@ set -x FORGIT_STASH_FZF_OPTS "
 	--bind='ctrl-x:execute($FORGIT_STASH_DROP_COMMAND)+reload(git stash list)'
 	--prompt='[ENTER] show   [CTRL+a] pop   [CTRL+x] drop > '"
 
+set -x RTSAN_LOCAL_BUILD_DIR "$HOME/code/radsan_cjappl/llvm-project/build/"
+set -x RTSAN_CLANG_BIN "$RTSAN_LOCAL_BUILD_DIR/bin/clang"
+set -x RTSAN_CLANGXX_BIN "$RTSAN_LOCAL_BUILD_DIR/bin/clang++"
 
-function llvm_clang_tidy --wraps "clang-tidy" --argument-names file fix
-    set clang_tidy_cmd "$HOME/code/radsan_cjappl/build/bin/clang-tidy --config-file=$HOME/code/radsan_cjappl/llvm-project/.clang-tidy -p $HOME/code/radsan_cjappl/build/"
-    
-    if test "$fix" = "--fix"
-        set clang_tidy_cmd "$clang_tidy_cmd --fix --fix-errors"
-    end
-
-    eval $clang_tidy_cmd $file
-end
-
-function clang_tidy_diff --wraps "clang-tidy-diff.py" --description 'Run clang-tidy-diff.py on a given branch or diff file'
-    argparse 'b/branch=' 'd/diff-file=' -- $argv
-    or return
-
-    set clang_tidy_binary "$HOME/code/radsan_cjappl/build/bin/clang-tidy"
-    set config_file "$HOME/code/radsan_cjappl/llvm-project/.clang-tidy"
-    set clang_tidy_diff "$HOME/code/clang-tidy-diff.py"
-    set build_database "$HOME/code/radsan_cjappl/build/compile_commands.json"
-
-    if set -q _flag_diff_file
-        cat $_flag_diff_file | $clang_tidy_diff -p1 -clang-tidy-binary $clang_tidy_binary -config $config_file -checks="-clang-diagnostic-*" -path $build_database
-    else
-        git -C $HOME/code/radsan_cjappl/llvm-project diff $_flag_branch | $clang_tidy_diff -p1 -clang-tidy-binary $clang_tidy_binary -config $config_file -checks="-clang-diagnostic-*" -path $build_database
-    end
-end
-
-function radsan_test
-    make -C ~/code/radsan_cjappl/ test
-end
+set RTSAN_LIT_OPTS_ENV "LIT_OPTS=\"--filter=.*rtsan.*|attributes.ll|fsanitize.c|compatibility.ll --allow-empty-runs\""
 
 function ,mrremote --description 'Remote rtsan build'
   set_common_targets
   set BUILD_DIR "/Users/topher/code/radsan/build/"
   set LOCAL_LLVM_DIR "/Users/topher/code/radsan_cjappl/llvm-project/"
 
-  rsync -avz --delete --force --exclude "$LOCAL_LLVM_DIR/build/" --exclude "$LOCAL_LLVM_DIR/.cache" $LOCAL_LLVM_DIR topher@Kates-MBP-2:$HOME/code/radsan/llvm-project/; or exit $status;
+  rsync -avz --delete --force --exclude "build*" --exclude ".cache" $LOCAL_LLVM_DIR/ topher@Kates-MBP-2:$HOME/code/radsan/llvm-project/; or return $status;
 
-  ssh topher@Kates-MBP-2 "export PATH=\"/opt/homebrew/bin:\$PATH\" && export $RTSAN_LIT_OPTS_ENV && cmake --build $BUILD_DIR --target $RTSAN_TARGETS_LIT"; or exit $status;
-  ssh topher@Kates-MBP-2 "export PATH=\"/opt/homebrew/bin:\$PATH\" && cmake --build $BUILD_DIR --target $RTSAN_TARGETS_CLANG"; or exit $status;
+  caffeinate -di ssh topher@Kates-MBP-2 "export PATH=\"/opt/homebrew/bin:\$PATH\" && cmake --build $BUILD_DIR --target $RTSAN_TARGETS_CLANG"; or return $status;
+  caffeinate -di ssh topher@Kates-MBP-2 "export PATH=\"/opt/homebrew/bin:\$PATH\" && export $RTSAN_LIT_OPTS_ENV && cmake --build $BUILD_DIR --target $RTSAN_TARGETS_LIT"; or return $status;
 end
-
-
-set RTSAN_LIT_OPTS_ENV "LIT_OPTS=--filter=.*rtsan.*|attributes.ll|compatibility.ll|fsanitize.c --allow-empty-runs"
 
 function set_common_targets
     set -g RTSAN_TARGETS_CLANG clang check-rtsan
@@ -369,22 +341,23 @@ end
 
 function ,mrlocal --description 'Local rtsan build'
   set_common_targets
-  set BUILD_DIR "$HOME/code/radsan_cjappl/build/"
+  set BUILD_DIR $RTSAN_LOCAL_BUILD_DIR
   set NPROCS (math (sysctl -n hw.ncpu) - 2)
 
-  env $RTSAN_LIT_OPTS_ENV cmake --build $BUILD_DIR --target $RTSAN_TARGETS_LIT -j $NPROCS; or exit $status;
-  cmake --build $BUILD_DIR --target $RTSAN_TARGETS_CLANG -j $NPROCS; or exit $status;
+  set RTSAN_LIT_OPTS_ENV "LIT_OPTS=--filter=.*rtsan.*|attributes.ll|fsanitize.c|compatibility.ll --allow-empty-runs"
+  caffeinate -di cmake --build $BUILD_DIR --target $RTSAN_TARGETS_CLANG -j $NPROCS; or return $status;
+  caffeinate -di env $RTSAN_LIT_OPTS_ENV cmake --build $BUILD_DIR --target $RTSAN_TARGETS_LIT -j $NPROCS; or return $status;
 end
 
-function ,mrubuntu --description 'Ubuntu docker rtsan build'
+function ,mrdocker --description 'Ubuntu docker rtsan build'
   set_common_targets
 
   set IMAGE_NAME radsan-segfault
   set BUILD_DIR "/test_radsan/build_debug_ubuntu"
   set ENV_VARS "CCACHE_DIR=/test_radsan/ccache_ubuntu"
   set VOLUME_MOUNT "$HOME/code/radsan_cjappl:/test_radsan"
-  docker run -it -e $ENV_VARS -v $VOLUME_MOUNT $IMAGE_NAME:latest cmake --build $BUILD_DIR --target $RTSAN_TARGETS_CLANG; or exit $status;
-  docker run -it -e $ENV_VARS -v $VOLUME_MOUNT -e $RTSAN_LIT_OPTS_ENV $IMAGE_NAME:latest cmake --build $BUILD_DIR --target $RTSAN_TARGETS_LIT; or exit $status;
+  caffeinate -di docker run -it -e $ENV_VARS -v $VOLUME_MOUNT $IMAGE_NAME:latest cmake --build $BUILD_DIR --target $RTSAN_TARGETS_CLANG; or return $status;
+  caffeinate -di docker run -it -e $ENV_VARS -v $VOLUME_MOUNT -e $RTSAN_LIT_OPTS_ENV $IMAGE_NAME:latest cmake --build $BUILD_DIR --target $RTSAN_TARGETS_LIT; or return $status;
 end
 
 abbr -a cops "gh copilot suggest \""
@@ -404,3 +377,5 @@ alias run_anki_web "npm run dev --prefix $ANKI_WEB_DIR"
 function obsi_to_anki
     /Users/topher/.virtualenvs/anki_gen/bin/python $HOME/code/Obsidian_to_Anki/obsidian_to_anki.py -R "$OBSIDIAN" --regex
 end
+
+git machete completion fish | source

@@ -7,3 +7,5 @@ Testing/*
 .DS_Store
 
 .python-version
+
+.venv

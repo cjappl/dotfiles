@@ -42,7 +42,7 @@ Plug 'edkolev/tmuxline.vim'
 Plug 'elzr/vim-json', {'for': 'json'}
 Plug 'github/copilot.vim'
 Plug 'neoclide/coc.nvim' , {'branch': 'release'}
-Plug 'pboettch/vim-cmake-syntax', {'for': 'cmake'} 
+Plug 'pboettch/vim-cmake-syntax', {'for': 'cmake'}
 Plug 'tpope/vim-fugitive', {'on': 'Git'}
 Plug 'vim-airline/vim-airline'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
@@ -368,14 +368,16 @@ func! DeleteTrailingWS()
   exe "normal `z"
 endfunc
 
-"autocmd BufWrite *.py :call DeleteTrailingWS()
+autocmd BufWrite *.py :call DeleteTrailingWS()
 
-"autocmd BufWrite *.c :call DeleteTrailingWS()
-"autocmd BufWrite *.cpp :call DeleteTrailingWS()
-"autocmd BufWrite *.h :call DeleteTrailingWS()
-"autocmd BufWrite Makefile :call DeleteTrailingWS()
+autocmd BufWrite *.c :call DeleteTrailingWS()
+autocmd BufWrite *.cpp :call DeleteTrailingWS()
+autocmd BufWrite *.h :call DeleteTrailingWS()
+autocmd BufWrite *.ll :call DeleteTrailingWS()
+"autocmd BufWrite *.rst :call DeleteTrailingWS()
+autocmd BufWrite Makefile :call DeleteTrailingWS()
 
-"autocmd BufWrite *.vim :call DeleteTrailingWS()
+autocmd BufWrite *.vim :call DeleteTrailingWS()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Spell checking
@@ -473,10 +475,29 @@ endfunction
 command Format   call ClangFormatFunction()
 
 
-
 lua << EOF
 
-require('fzf-lua').setup({'max-perf'})
+-- taken from the max perf, but making it always horizontal
+-- https://github.com/ibhagwan/fzf-lua/blob/main/lua/fzf-lua/profiles/max-perf.lua
+require'fzf-lua'.setup {
+  winopts = { preview = {
+    default = "bat",
+    vertical       = 'down:45%',      -- up|down:size
+    horizontal     = 'right:60%',     -- right|left:size
+    layout         = 'horizontal',    -- horizontal|vertical|flex
+    flip_columns   = 120,             -- #cols to switch to horizontal on flex
+  } },
+  manpages = { previewer = "man_native" },
+  helptags = { previewer = "help_native" },
+  lsp = { code_actions = { previewer = "codeaction_native" } },
+  tags = { previewer = "bat" },
+  btags = { previewer = "bat" },
+  files = { fzf_opts = { ["--ansi"] = false } },
+  defaults = {
+    git_icons = false,
+    file_icons = false,
+  },
+}
 
 EOF
 
@@ -491,7 +512,7 @@ nnoremap <leader>f <cmd> lua require('fzf-lua').grep_cword()<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Copilot 
+" => Copilot
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 imap <silent><script><expr> <S-Tab> copilot#Accept("\<CR>")
@@ -501,11 +522,11 @@ nnoremap <silent> <leader>c :call CopilotToggle()<CR>
 
 function! CopilotToggle()
     if g:copilot_enabled == v:true
-        let g:copilot_enabled = v:false 
+        let g:copilot_enabled = v:false
         :Copilot disable
         echo "Copilot disabled"
     else
-        let g:copilot_enabled = v:true 
+        let g:copilot_enabled = v:true
         :Copilot enable
         echo "Copilot enabled"
     endif
@@ -533,3 +554,8 @@ function! ShowCurrentBufferPath()
     " Echo the path to the command line
     echo l:bufferPath
 endfunction
+
+highlight ColorColumn guibg=DarkGrey
+call matchadd('ColorColumn', '\%82v', 100)
+"set colorcolumn=82
+
